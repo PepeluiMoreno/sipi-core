@@ -2,12 +2,27 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Optional, List
 from decimal import Decimal
+from enum import Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Text, Numeric, Boolean, ForeignKey
+from sqlalchemy import String, Text, Numeric, Boolean, ForeignKey, Enum as SAEnum
+from sqlalchemy.dialects.postgresql import JSONB
 from geoalchemy2 import Geometry
 
 from sipi.db.base import Base
 from sipi.db.mixins import UUIDPKMixin, AuditMixin
+
+
+class EstadoCicloVida(str, Enum):
+    INMATRICULADO = "inmatriculado"
+    EN_VENTA = "en_venta"
+    VENDIDO = "vendido"
+    CAMBIO_DE_USO = "cambio_de_uso"
+
+
+class GeoQuality(str, Enum):
+    MANUAL = "manual"     # Validado por humano
+    AUTO = "auto"         # Asignado por script
+    MISSING = "missing"   # Sin coordenadas
 
 
 class Inmueble(UUIDPKMixin, AuditMixin, Base):
@@ -16,6 +31,23 @@ class Inmueble(UUIDPKMixin, AuditMixin, Base):
     nombre: Mapped[str] = mapped_column(String(255), index=True)
     descripcion: Mapped[Optional[str]] = mapped_column(Text)
     
+    # --- Lifecycle & Geo Status (NEW) ---
+    estado_ciclo_vida: Mapped[EstadoCicloVida] = mapped_column(
+        SAEnum(EstadoCicloVida), 
+        default=EstadoCicloVida.INMATRICULADO,
+        index=True
+    )
+    geo_quality: Mapped[GeoQuality] = mapped_column(
+        SAEnum(GeoQuality),
+        default=GeoQuality.MISSING,
+        index=True
+    )
+    
+    # --- Visitabilidad (NEW) ---
+    es_visitable: Mapped[bool] = mapped_column(Boolean, default=False)
+    horario_visitas: Mapped[Optional[str]] = mapped_column(Text) # Obligatorio si BIC + Visitable
+    enlace_web_visitas: Mapped[Optional[str]] = mapped_column(String(500))
+
     comunidad_autonoma_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("comunidades_autonomas.id"), index=True)
     provincia_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("provincias.id"), index=True)
     municipio_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("municipios.id"), index=True)
@@ -59,6 +91,7 @@ class Inmueble(UUIDPKMixin, AuditMixin, Base):
     documentos: Mapped[List["InmuebleDocumento"]] = relationship("InmuebleDocumento", back_populates="inmueble", cascade="all, delete-orphan")
     actuaciones: Mapped[List["Actuacion"]] = relationship("Actuacion", back_populates="inmueble", cascade="all, delete-orphan")
     transmisiones: Mapped[List["Transmision"]] = relationship("Transmision", back_populates="inmueble", cascade="all, delete-orphan")
+    lifecycle_events: Mapped[List["InmuebleLifecycle"]] = relationship("InmuebleLifecycle", back_populates="inmueble", cascade="all, delete-orphan")
 
 
 class Inmatriculacion(UUIDPKMixin, AuditMixin, Base):
