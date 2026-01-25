@@ -1,4 +1,4 @@
-# sipi-core/app/db/sessions/async_session.py
+# sipi-core/src/sipi/db/sessions/async_session.py
 """
 Global async session maker for the SIPI application.
 """
@@ -11,14 +11,14 @@ from .manager import AsyncDatabaseManager
 # ENCONTRAR .env RELATIVO A ESTE ARCHIVO
 # ================================================
 
-# Este archivo: sipi-core/app/db/sessions/async_session.py
+# Este archivo: sipi-core/src/sipi/db/sessions/async_session.py
 current_file = Path(__file__).resolve()
 
-# Subir 3 niveles para llegar a la raíz de sipi-core
-# sipi-core/app/db/sessions/async_session.py
-#          ^   ^    ^
-#          3   2    1  niveles para subir
-sipi_core_root = current_file.parent.parent.parent
+# Subir 5 niveles para llegar a la raíz de sipi-core
+# sipi-core/src/sipi/db/sessions/async_session.py
+#          ^    ^    ^   ^    ^
+#          5    4    3   2    1  niveles para subir
+sipi_core_root = current_file.parent.parent.parent.parent.parent
 
 # Buscar .env en la raíz de sipi-core
 env_path = sipi_core_root / '.env'
@@ -57,4 +57,4 @@ db_manager = AsyncDatabaseManager(
 async_session_maker = db_manager.session_maker
 get_session = db_manager.get_session
 
-__all__ = ["async_session_maker", "get_session", "db_manager"]
+__all__ = ["async_session_maker", "get_session", "db_manager", "DATABASE_URL"]

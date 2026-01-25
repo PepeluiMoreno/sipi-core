@@ -16,7 +16,7 @@
     - [ ] **[Backend]** Apply migration to Aiven DB (pending DB activation) <!-- id: 10 -->
 
 - [ ] Phase 2: Surveillance Engines (The "Eyes") <!-- id: 11 -->
-    - [ ] **[ETL]** Create `osm_census_loader` script (Bulk Import) <!-- id: 12 -->
+    - [ ] **[ETL]** Create `lista_geografica_loader` script (Bulk Import) <!-- id: 12 -->
     - [ ] **[Survey]** Implement `SubsidyScraper` (NIF 'R%') <!-- id: 13 -->
     - [ ] **[Survey]** Implement `ProcurementScraper` (Contratación Estado) <!-- id: 14 -->
     - [ ] **[ETL]** Create `AutoMatcher` pipeline (Matching Logic) <!-- id: 15 -->

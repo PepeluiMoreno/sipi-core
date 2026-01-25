@@ -98,6 +98,7 @@ def run_migrations_online() -> None:
     with connectable.connect() as connection:
         # Establecer el search_path al schema configurado
         connection.execute(text(f"SET search_path TO {SCHEMA}, public"))
+        connection.commit()
 
         context.configure(
             connection=connection,
@@ -109,6 +110,8 @@ def run_migrations_online() -> None:
 
         with context.begin_transaction():
             context.run_migrations()
+
+        connection.commit()
 
 
 if context.is_offline_mode():

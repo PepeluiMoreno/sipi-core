@@ -34,7 +34,7 @@ Establish the foundation for handling lifecycle, geolocation, and visitability.
 Activate the "eyes" of the system (`sipi-survey`).
 
 #### `sipi-survey` & `sipi-etl`
-- **[NEW] `pipelines/osm_census_loader.py`**: Script to bulk load OSM data.
+- **[NEW] `pipelines/lista_geografica_loader.py`**: Script to bulk load OSM data.
 - **[NEW] `src/modules/subsidies`**: Scraper for subsidies (NIF 'R%'). linking to `InmuebleLifecycle` (Event: `REHABILITACION_SUBVENCIONADA`).
 - **[NEW] `src/modules/procurement`**: Scraper for Public Contracts.
 - **[NEW] `pipelines/auto_matcher.py`**: Logic for "Posiblemente Vendido" and linking ads.

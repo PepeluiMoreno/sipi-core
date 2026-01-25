@@ -35,10 +35,8 @@ def upgrade() -> None:
     op.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
 
     # =========================================================================
-    # 3. CREAR ENUMS
+    # 3. ENUMS (SQLAlchemy los crea automáticamente al crear las tablas)
     # =========================================================================
-    op.execute(f"CREATE TYPE {SCHEMA}.tipoidentificacion AS ENUM ('dni', 'nie', 'nif', 'cif', 'pasaporte', 'cif_extranjero', 'otro')")
-    op.execute(f"CREATE TYPE {SCHEMA}.nivel_proteccion AS ENUM ('nacional', 'autonomico', 'local')")
 
     # =========================================================================
     # 4. TABLAS BASE (SIN FKs o con FKs a sí mismas)

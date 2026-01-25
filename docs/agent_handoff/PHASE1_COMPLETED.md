@@ -234,7 +234,7 @@ DATABASE_SCHEMA=sipi
 
 Una vez verificada la Fase 1, continuar con:
 
-1. **ETL** - `osm_census_loader` (Carga masiva de OSM)
+1. **ETL** - `lista_geografica_loader` (Carga masiva de OSM)
 2. **Survey** - `SubsidyScraper` (Scrapers de subvenciones)
 3. **Survey** - `ProcurementScraper` (Scraper de contratación pública)
 4. **ETL** - `AutoMatcher` (Lógica de matching automático)

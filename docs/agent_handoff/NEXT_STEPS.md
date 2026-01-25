@@ -158,7 +158,7 @@ Ver [task.md](task.md) - Tasks ID: 12-15
 #### Tarea 12: OSM Census Loader
 **Objetivo**: Script ETL para cargar censo de lugares desde OpenStreetMap.
 
-**Ubicación**: `sipi-survey/pipelines/osm_census_loader.py`
+**Ubicación**: `sipi-survey/pipelines/lista_geografica_loader.py`
 
 **Funcionalidad**:
 - Extraer lugares religiosos/patrimoniales de OSM usando Overpass API
