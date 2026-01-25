@@ -25,13 +25,13 @@ class Usuario(UUIDPKMixin, AuditMixin, IdentificacionMixin, ContactoMixin, Base)
     hashed_contrasena: Mapped[str] = mapped_column(Text)
     email_verificado: Mapped[bool] = mapped_column(Boolean, default=False)
     
-    # ✅ FIX: Relaciones con joins explícitos
+    # Relación muchos-a-muchos con Rol
     roles: Mapped[list["Rol"]] = relationship(
-        "Rol", 
-        secondary=usuario_rol, 
+        "Rol",
+        secondary=lambda: usuario_rol,
+        primaryjoin=lambda: Usuario.id == usuario_rol.c.usuario_id,
+        secondaryjoin=lambda: Rol.id == usuario_rol.c.rol_id,
         back_populates="usuarios",
-        primaryjoin="Usuario.id == usuario_rol.c.usuario_id",
-        secondaryjoin="usuario_rol.c.rol_id == Rol.id",
     )
 
 class Rol(UUIDPKMixin, AuditMixin, Base):
@@ -40,11 +40,11 @@ class Rol(UUIDPKMixin, AuditMixin, Base):
     nombre: Mapped[str] = mapped_column(String(50), unique=True, index=True)
     descripcion: Mapped[Optional[str]] = mapped_column(Text)
      
-    # ✅ FIX: Relaciones con joins explícitos
+    # Relación muchos-a-muchos con Usuario
     usuarios: Mapped[list["Usuario"]] = relationship(
-        "Usuario", 
-        secondary=usuario_rol, 
+        "Usuario",
+        secondary=lambda: usuario_rol,
+        primaryjoin=lambda: Rol.id == usuario_rol.c.rol_id,
+        secondaryjoin=lambda: Usuario.id == usuario_rol.c.usuario_id,
         back_populates="roles",
-        primaryjoin="Rol.id == usuario_rol.c.rol_id",
-        secondaryjoin="usuario_rol.c.usuario_id == Usuario.id",
     )

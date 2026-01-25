@@ -13,8 +13,9 @@ class Transmision(UUIDPKMixin, AuditMixin, Base):
     __tablename__ = "transmisiones"
     
     inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("inmuebles.id"), index=True)
-    transmitente_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("transmitentes.id"), index=True)
-    adquiriente_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("adquirientes.id"), index=True)
+    # TODO: Transmitente y Adquiriente serán modelados como Actores genéricos
+    # transmitente_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("transmitentes.id"), index=True)
+    # adquiriente_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("adquirientes.id"), index=True)
     notaria_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("notarias.id"), index=True)
     registro_propiedad_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("registros_propiedad.id"), index=True)
     tipo_transmision_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("tipos_transmision.id"), index=True)
@@ -26,13 +27,15 @@ class Transmision(UUIDPKMixin, AuditMixin, Base):
     
     # Relaciones
     inmueble: Mapped["Inmueble"] = relationship("Inmueble", back_populates="transmisiones", foreign_keys=[inmueble_id])
-    transmitente: Mapped[Optional["Transmitente"]] = relationship("Transmitente", back_populates="transmisiones")
-    adquiriente: Mapped[Optional["Adquiriente"]] = relationship("Adquiriente", back_populates="transmisiones")
+    # TODO: Los modelos Transmitente y Adquiriente no existen, se modelarán via Proceso
+    # transmitente: Mapped[Optional["Transmitente"]] = relationship("Transmitente", back_populates="transmisiones")
+    # adquiriente: Mapped[Optional["Adquiriente"]] = relationship("Adquiriente", back_populates="transmisiones")
     notaria: Mapped[Optional["Notaria"]] = relationship("Notaria", back_populates="transmisiones")
     registro_propiedad: Mapped[Optional["RegistroPropiedad"]] = relationship("RegistroPropiedad", back_populates="transmisiones")
     tipo_transmision: Mapped[Optional["TipoTransmision"]] = relationship("TipoTransmision", back_populates="transmisiones")
     tipo_certificacion_propiedad: Mapped[Optional["TipoCertificacionPropiedad"]] = relationship("TipoCertificacionPropiedad", back_populates="transmisiones")
-    documentos: Mapped[list["TransmisionDocumento"]] = relationship("TransmisionDocumento", back_populates="transmision", cascade="all, delete-orphan")
+    # TODO: Descomentar cuando se implemente TransmisionDocumento
+    # documentos: Mapped[list["TransmisionDocumento"]] = relationship("TransmisionDocumento", back_populates="transmision", cascade="all, delete-orphan")
     anunciantes: Mapped[list["TransmisionAnunciante"]] = relationship("TransmisionAnunciante", back_populates="transmision", cascade="all, delete-orphan")
 
 class TransmisionAnunciante(UUIDPKMixin, AuditMixin, Base):

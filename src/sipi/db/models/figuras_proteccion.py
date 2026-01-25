@@ -78,7 +78,7 @@ class FiguraProteccion(UUIDPKMixin, AuditMixin, Base):
     
     # Nivel jerárquico de protección
     nivel: Mapped[NivelProteccion] = mapped_column(
-        SQLEnum(NivelProteccion, name='nivel_proteccion'),
+        SQLEnum(NivelProteccion, name='nivel_proteccion', values_callable=lambda x: [e.value for e in x]),
         index=True,
         nullable=False,
         comment="Nivel de protección: nacional, autonomico o local"
@@ -135,12 +135,9 @@ class FiguraProteccion(UUIDPKMixin, AuditMixin, Base):
     # =======================================================================
     # RELACIONES
     # =======================================================================
-    
-    inmuebles: Mapped[list["Inmueble"]] = relationship(
-        "Inmueble",
-        back_populates="figura_proteccion"
-    )
-    
+
+    # inmuebles: Deprecado - ahora se usa InmuebleNivelProteccion para historial temporal
+
     # =======================================================================
     # CONSTRAINTS E ÍNDICES
     # =======================================================================

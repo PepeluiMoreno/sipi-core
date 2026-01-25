@@ -4,34 +4,30 @@ from sipi.db.mixins import UUIDPKMixin, AuditMixin
 
 # Actores
 from .actores import (
-    Adquiriente, Administracion, AdministracionTitular, AgenciaInmobiliaria,
-    ColegioProfesional, Diocesis, DiocesisTitular, Notaria,
-    Tecnico, RegistroPropiedad, RegistroPropiedadTitular, Transmitente
+    Privado, Administracion, AdministracionTitular, AgenciaInmobiliaria,
+    ColegioProfesional, Diocesis, DiocesisTitular, Notaria, NotariaTitular,
+    Tecnico, RegistroPropiedad, RegistroPropiedadTitular,
+    EntidadReligiosa, EntidadReligiosaTitular
 )
 
 # Tipologías
 from .tipologias import (
     TipoEstadoConservacion, TipoEstadoTratamiento, TipoRolTecnico,
-    TipoCertificacionPropiedad, TipoDocumento, TipoInmueble, TipoMimeDocumento,
-    TipoPersona, TipoTransmision, TipoVia, TipoLicencia, FuenteDocumental
+    TipoCertificacionPropiedad, TipoTituloPropiedad, TipoDocumento, TipoInmueble, TipoMimeDocumento,
+    TipoPersona, TipoTransmision, TipoVia, TipoEntidadReligiosa,
+    TipoLicencia, FuenteDocumental, TipoUsoInmueble
 )
 
 # Geografía
 from .geografia import ComunidadAutonoma, Provincia, Municipio
 
 # Documentos
-from .documentos import Documento, InmuebleDocumento, ActuacionDocumento, TransmisionDocumento
+from .documentos import Documento, InmuebleDocumento
 
-# Actuaciones
-from .actuaciones import Actuacion, ActuacionTecnico
-
-# Transmisiones
-from .transmisiones import Transmision, TransmisionAnunciante
-
-# Inmuebles (incluye InmuebleCita)
+# Inmuebles (incluye InmuebleCita, InmuebleUso, InmuebleNivelProteccion)
 from .inmuebles import (
-    Inmueble, Inmatriculacion, InmuebleDenominacion, 
-    InmuebleOSMExt, InmuebleWDExt, InmuebleCita
+    Inmueble, Inmatriculacion, InmuebleDenominacion,
+    InmuebleOSMExt, InmuebleWDExt, InmuebleCita, InmuebleUso, InmuebleNivelProteccion
 )
 
 # Historiografía
@@ -40,8 +36,14 @@ from .historiografia import FuenteHistoriografica
 # Figuras de Protección
 from .figuras_proteccion import FiguraProteccion, NivelProteccion
 
+# Transmisiones
+from .transmisiones import Transmision, TransmisionAnunciante
+
+# Intervenciones
+from .intervenciones import Intervencion, IntervencionTecnico
+
 # Subvenciones
-from .subvenciones import ActuacionSubvencion, SubvencionAdministracion
+from .subvenciones import IntervencionSubvencion, SubvencionAdministracion
 
 # Usuarios
 from .users import Usuario, Rol
@@ -49,35 +51,46 @@ from .users import Usuario, Rol
 # Discovery (Anuncios)
 from .discovery import InmuebleRaw, DeteccionAnuncio
 
+# OSM
+from .osm import OSMPlace
+
+# Historial (Sistema de Inteligencia) - DEPRECADO
+# from .inmuebles import InmuebleEvento
+# from .tipologias import EventoRegistrable
+
 __all__ = [
     'Base', 'UUIDPKMixin', 'AuditMixin',
     # Actores
-    'Adquiriente', 'Administracion', 'AdministracionTitular', 'AgenciaInmobiliaria',
-    'ColegioProfesional', 'Diocesis', 'DiocesisTitular', 'Notaria',
-    'Tecnico', 'RegistroPropiedad', 'RegistroPropiedadTitular', 'Transmitente',
+    'Privado', 'Administracion', 'AdministracionTitular', 'AgenciaInmobiliaria',
+    'ColegioProfesional', 'Diocesis', 'DiocesisTitular', 'Notaria', 'NotariaTitular',
+    'Tecnico', 'RegistroPropiedad', 'RegistroPropiedadTitular',
+    'EntidadReligiosa', 'EntidadReligiosaTitular',
     # Tipologías
     'TipoEstadoConservacion', 'TipoEstadoTratamiento', 'TipoRolTecnico',
-    'TipoCertificacionPropiedad', 'TipoDocumento', 'TipoInmueble', 'TipoMimeDocumento',
-    'TipoPersona', 'TipoTransmision', 'TipoVia', 'TipoLicencia', 'FuenteDocumental',
+    'TipoCertificacionPropiedad', 'TipoTituloPropiedad', 'TipoDocumento', 'TipoInmueble', 'TipoMimeDocumento',
+    'TipoPersona', 'TipoTransmision', 'TipoVia', 'TipoEntidadReligiosa',
+    'TipoLicencia', 'FuenteDocumental', 'TipoUsoInmueble',
     # Geografía
     'ComunidadAutonoma', 'Provincia', 'Municipio',
     # Documentos
-    'Documento', 'InmuebleDocumento', 'ActuacionDocumento', 'TransmisionDocumento',
-    # Actuaciones
-    'Actuacion', 'ActuacionTecnico',
-    # Transmisiones
-    'Transmision', 'TransmisionAnunciante',
+    'Documento', 'InmuebleDocumento',
     # Inmuebles
     'Inmueble', 'Inmatriculacion', 'InmuebleDenominacion',
-    'InmuebleOSMExt', 'InmuebleWDExt', 'InmuebleCita',
+    'InmuebleOSMExt', 'InmuebleWDExt', 'InmuebleCita', 'InmuebleUso', 'InmuebleNivelProteccion', 'InmuebleEvento',
     # Historiografía
     'FuenteHistoriografica',
     # Figuras de Protección
     'FiguraProteccion', 'NivelProteccion',
+    # Transmisiones
+    'Transmision', 'TransmisionAnunciante',
+    # Intervenciones
+    'Intervencion', 'IntervencionTecnico',
     # Subvenciones
-    'ActuacionSubvencion', 'SubvencionAdministracion',
+    'IntervencionSubvencion', 'SubvencionAdministracion',
     # Usuarios
     'Usuario', 'Rol',
     # Discovery
-    'InmuebleRaw', 'DeteccionAnuncio'
+    'InmuebleRaw', 'DeteccionAnuncio',
+    # OSM
+    'OSMPlace',
 ]

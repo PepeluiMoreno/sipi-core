@@ -20,20 +20,20 @@ class UUIDPKMixin:
 class AuditMixin:
     """Auditoría de creación, modificación y eliminación lógica"""
     
-    # Timestamps
+    # Timestamps (timezone-naive para PostgreSQL TIMESTAMP WITHOUT TIME ZONE)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime, 
-        default=lambda: datetime.now(timezone.utc), 
-        nullable=False, 
+        DateTime,
+        default=lambda: datetime.utcnow(),
+        nullable=False,
         index=True
     )
     updated_at: Mapped[Optional[datetime]] = mapped_column(
-        DateTime, 
-        onupdate=lambda: datetime.now(timezone.utc), 
+        DateTime,
+        onupdate=lambda: datetime.utcnow(),
         index=True
     )
     deleted_at: Mapped[Optional[datetime]] = mapped_column(
-        DateTime, 
+        DateTime,
         index=True
     )
     
@@ -74,7 +74,7 @@ class AuditMixin:
     
     def soft_delete(self, user_id: Optional[str] = None) -> None:
         """Marcar como eliminado (soft delete)"""
-        self.deleted_at = datetime.now(timezone.utc)
+        self.deleted_at = datetime.utcnow()
         if user_id:
             self.deleted_by_id = user_id
     

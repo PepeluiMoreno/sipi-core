@@ -1,10 +1,13 @@
 # models/ Tipologias.py
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Text, Boolean, Integer, ForeignKey
 from sipi.db.base import Base
 from sipi.db.mixins import UUIDPKMixin, AuditMixin
+
+if TYPE_CHECKING:
+    from .inmuebles import InmuebleEvento
 
 
 class  TipologiaBase(UUIDPKMixin, AuditMixin, Base):
@@ -29,6 +32,18 @@ class TipoCertificacionPropiedad( TipologiaBase):
     transmisiones: Mapped[list["Transmision"]] = relationship("Transmision", back_populates="tipo_certificacion_propiedad")
     inmatriculaciones: Mapped[list["Inmatriculacion"]] = relationship("Inmatriculacion", back_populates="tipo_certificacion_propiedad")
 
+class TipoTituloPropiedad(UUIDPKMixin, AuditMixin, Base):
+    """
+    Catálogo de tipos de títulos de propiedad.
+    Se usa en el proceso de INMATRICULACION para especificar el tipo de título presentado.
+    """
+    __tablename__ = "tipos_titulo_propiedad"
+
+    codigo: Mapped[str] = mapped_column(String(50), unique=True, index=True)
+    nombre: Mapped[str] = mapped_column(String(200))
+    descripcion: Mapped[str | None] = mapped_column(Text, nullable=True)
+    activo: Mapped[bool] = mapped_column(Boolean, default=True)
+
 class TipoDocumento( TipologiaBase):
     __tablename__ = "tipos_documento"
     documentos: Mapped[list["Documento"]] = relationship("Documento", back_populates="tipo_documento")
@@ -52,6 +67,11 @@ class TipoTransmision( TipologiaBase):
 
 class TipoVia( TipologiaBase):
     __tablename__ = "tipos_via"
+
+class TipoEntidadReligiosa(TipologiaBase):
+    """Tipos de entidades religiosas: Orden, Congregación, Instituto de Vida Consagrada, etc."""
+    __tablename__ = "tipos_entidad_religiosa"
+    entidades_religiosas: Mapped[list["EntidadReligiosa"]] = relationship("EntidadReligiosa", back_populates="tipo_entidad")
 
 
 class TipoLicencia(UUIDPKMixin, AuditMixin, Base):
@@ -89,6 +109,45 @@ class TipoLicencia(UUIDPKMixin, AuditMixin, Base):
         return self.familia == "Creative Commons"
 
 
+class TipoUsoInmueble(TipologiaBase):
+    """
+    Catálogo de tipos de uso de inmuebles.
+
+    Define los diferentes usos que puede tener un inmueble a lo largo de su historia.
+    Ejemplos: Religioso, Cultural, Turístico, Residencial, No declarado
+    """
+    __tablename__ = "tipos_uso_inmueble"
+
+    codigo: Mapped[str] = mapped_column(String(50), unique=True, index=True, nullable=False)
+    activo: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, index=True)
+
+    # Relación inversa
+    usos_inmuebles: Mapped[List["InmuebleUso"]] = relationship("InmuebleUso", back_populates="tipo_uso")
+
+
+# ============================================================================
+# DEPRECADO: EventoRegistrable
+# ============================================================================
+# Los eventos ahora se representan mediante tablas específicas:
+# - Inmatriculación → tabla inmatriculaciones
+# - Enajenación → tabla transmisiones
+# - Intervención arquitectónica → tabla intervenciones
+# - Cambio de uso → tabla inmuebles_usos
+#
+# class EventoRegistrable(TipologiaBase):
+#     """
+#     DEPRECADO: Catálogo de tipos de eventos registrables.
+#     Usar tablas específicas para cada tipo de evento.
+#     """
+#     __tablename__ = "eventos_registrables"
+#
+#     codigo: Mapped[str] = mapped_column(String(50), unique=True, index=True, nullable=False)
+#     categoria: Mapped[str | None] = mapped_column(String(50), nullable=True, index=True)
+#     activo: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, index=True)
+#
+#     eventos: Mapped[List["InmuebleEvento"]] = relationship("InmuebleEvento", back_populates="tipo_evento")
+
+
 class FuenteDocumental(UUIDPKMixin, AuditMixin, Base):
     __tablename__ = "fuentes_documentales"
     codigo: Mapped[str] = mapped_column(String(50), unique=True, index=True, nullable=False)
@@ -110,11 +169,11 @@ class FuenteDocumental(UUIDPKMixin, AuditMixin, Base):
     activa: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, index=True)
     licencia_predeterminada: Mapped["TipoLicencia"] = relationship("TipoLicencia", foreign_keys=[licencia_predeterminada_id], back_populates="fuentes_documentales")
     documentos: Mapped[list["Documento"]] = relationship("Documento", back_populates="fuente_documental")
-    
+
     @property
     def badge_text(self) -> str:
         return self.nombre
-    
+
     @property
     def necesita_storage_propio(self) -> bool:
         return not self.requiere_url_externa

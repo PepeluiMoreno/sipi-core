@@ -4,7 +4,7 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy import MetaData
 
 # ✅ Schema configurable via variable de entorno
-DB_SCHEMA = os.getenv("DB_SCHEMA", "sipi")
+DB_SCHEMA = os.getenv("DATABASE_SCHEMA") or os.getenv("DB_SCHEMA", "sipi")
 
 # ✅ Configurar metadata con schema por defecto
 metadata = MetaData(schema=DB_SCHEMA)
