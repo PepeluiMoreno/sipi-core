@@ -189,7 +189,8 @@ class Notaria(UUIDPKMixin, AuditMixin, ContactoDireccionMixin, Base):
     __tablename__ = "notarias"
     
     nombre: Mapped[str] = mapped_column(String(255), index=True)
-    
+    codigo_oficial: Mapped[Optional[str]] = mapped_column(String(20), unique=True, index=True, nullable=False)
+
     # Relaciones con nombres descriptivos - ubicación física de la notaría
     municipio_ubicacion: Mapped[Optional["Municipio"]] = relationship(
         "Municipio",
@@ -238,6 +239,14 @@ class RegistroPropiedadTitular(TitularBase):
 class EntidadReligiosa(UUIDPKMixin, AuditMixin, IdentificacionMixin, ContactoDireccionMixin, TitularidadMixin, Base):
     """Entidades religiosas: Órdenes, Congregaciones, Institutos de Vida Consagrada"""
     __tablename__ = "entidades_religiosas"
+
+    numero_registro: Mapped[str] = mapped_column(
+       String(50),
+       unique=True,
+       nullable=False,
+       index=True,
+    comment="Número de inscripción oficial en el Registro de Entidades Religiosas"
+    )        
 
     tipo_entidad_id: Mapped[Optional[str]] = mapped_column(
         String(36), ForeignKey("tipos_entidad_religiosa.id", ondelete="RESTRICT"), index=True

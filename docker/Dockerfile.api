@@ -1,0 +1,28 @@
+# Backend API (sipi-api)
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Dependencias del sistema para PostGIS y compilacion
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libpq-dev \
+    libgeos-dev \
+    libproj-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copiar requirements e instalar dependencias Python
+COPY sipi-api/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar codigo fuente
+COPY sipi-core /app/sipi-core
+COPY sipi-api /app/sipi-api
+
+WORKDIR /app/sipi-api
+
+# Puerto de la API
+EXPOSE 8040
+
+# Comando de inicio
+CMD ["python", "start_api.py"]

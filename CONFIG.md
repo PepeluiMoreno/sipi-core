@@ -1,79 +1,93 @@
-# Configuración Centralizada SIPI
+# Configuracion Centralizada SIPI
 
-Este archivo documenta la configuración centralizada del proyecto SIPI.
+## Archivos de Configuracion
 
-## Ubicación de Variables de Entorno
+| Archivo | Proposito |
+|---------|-----------|
+| `sipi-core/.env` | Selector de entorno (development/production) |
+| `sipi-core/.env.development` | Variables para desarrollo local |
+| `sipi-core/.env.production` | Variables para produccion |
+| `sipi-core/config.py` | Modulo Python que carga la configuracion |
 
-**Archivo principal**: `C:\Users\admin\dev\sipi-core\.env`
+## Cambiar de Entorno
 
-Este archivo `.env` es la **fuente única de verdad** para toda la configuración del proyecto y es compartido entre:
-- Backend (sipi-api)
-- Frontend (sipi-frontend)
-- Scripts y herramientas (sipi-core)
+Editar `sipi-core/.env`:
 
-## Variables Configuradas
-
-### Base de Datos (Supabase)
 ```env
-DATABASE_URL=postgresql+asyncpg://postgres.edgrrunsbyhutbceafuf:jO04ufJ7R06LWRLE@aws-1-eu-west-1.pooler.supabase.com:5432/postgres
-DATABASE_SCHEMA=sipi
+# Para desarrollo
+ENVIRONMENT=development
+
+# Para produccion
+ENVIRONMENT=production
 ```
 
-### API GraphQL Backend
+El sistema cargara automaticamente `.env.development` o `.env.production`.
+
+## Variables de Entorno
+
+### Development (.env.development)
+
 ```env
-API_HOST=localhost
+ENVIRONMENT=development
+DATABASE_URL=postgresql+asyncpg://sipi:sipi@localhost:5432/sipi
+DATABASE_SCHEMA=sipi
+API_HOST=0.0.0.0
 API_PORT=8040
 API_URL=http://localhost:8040/graphql
-```
-
-### Frontend (Vite)
-```env
 VITE_API_URL=http://localhost:8040/graphql
-VITE_GRAPHQL_URL=http://localhost:8040/graphql
 ```
 
-## Cómo Usar
+### Production (.env.production)
 
-### Backend (sipi-api)
-El backend carga automáticamente el `.env` desde el directorio donde se ejecuta o desde las variables de entorno del sistema.
+```env
+ENVIRONMENT=production
+FRONTEND_DOMAIN=sipi.europalaica.org
+API_DOMAIN=sipi-api.europalaica.org
+DATABASE_URL=postgresql+asyncpg://user:pass@sipi-db:5432/sipi
+API_URL=https://sipi-api.europalaica.org/graphql
+VITE_API_URL=https://sipi-api.europalaica.org/graphql
+```
 
-### Frontend (sipi-frontend)
-El frontend está configurado en `vite.config.js` para cargar el `.env` desde `sipi-core`:
+## Uso en Python
+
+```python
+from config import CONFIG
+
+print(CONFIG.DATABASE_URL)
+print(CONFIG.API_PORT)
+print(CONFIG.ENVIRONMENT)  # development o production
+print(CONFIG.DEBUG)        # True en development
+```
+
+## Uso en Frontend (Vite)
 
 ```javascript
+// vite.config.js carga desde sipi-core
 const env = loadEnv(mode, path.resolve(__dirname, '../sipi-core'), '')
-```
 
-Las variables `VITE_*` son expuestas automáticamente al código del frontend y pueden ser accedidas con:
-
-```javascript
+// En codigo
 import.meta.env.VITE_API_URL
-import.meta.env.VITE_GRAPHQL_URL
 ```
 
-## Servicios Activos
+## Servicios (Development)
 
-### Backend GraphQL API
-- **URL**: http://localhost:8040/graphql
-- **GraphiQL**: http://localhost:8040/graphql
-- **OpenAPI Docs**: http://localhost:8040/docs
-- **Health Check**: http://localhost:8040/health
+| Servicio | URL |
+|----------|-----|
+| GraphQL API | http://localhost:8040/graphql |
+| Health Check | http://localhost:8040/health |
+| Frontend | http://localhost:5173 |
 
-### Frontend
-- **URL**: http://localhost:5177/ (o el puerto disponible que Vite encuentre)
+## Servicios (Production)
 
-## Cambiar Configuración
+| Servicio | URL |
+|----------|-----|
+| Frontend | https://sipi.europalaica.org |
+| GraphQL API | https://sipi-api.europalaica.org/graphql |
 
-Para cambiar la configuración del proyecto:
+## Reglas
 
-1. Editar **únicamente** el archivo `C:\Users\admin\dev\sipi-core\.env`
-2. Reiniciar los servicios que necesites actualizar:
-   - Backend: Reiniciar uvicorn
-   - Frontend: Reiniciar vite (se recarga automáticamente en modo dev)
-
-## Notas Importantes
-
-- ✅ **NO** crear archivos `.env` en otros directorios (sipi-api, sipi-frontend)
-- ✅ **NO** hardcodear URLs o puertos en el código
-- ✅ **SIEMPRE** usar variables de entorno para configuración
-- ✅ El archivo `.env` **NO** debe committearse a git (está en .gitignore)
+- Editar `.env` solo para cambiar el entorno
+- Editar `.env.development` o `.env.production` para cambiar valores
+- No crear .env en sipi-api ni sipi-frontend
+- No hardcodear valores en el codigo
+- Los archivos .env no se commitean (estan en .gitignore)
