@@ -67,7 +67,7 @@ class Municipio(UUIDPKMixin, AuditMixin, Base):
     """Municipio español"""
     __tablename__ = "municipios"
     
-    codigo_ine: Mapped[Optional[str]] = mapped_column(String(5), unique=True, index=True)
+    codigo_ine: Mapped[str] = mapped_column(String(5), unique=True, index=True, nullable=False)
     nombre: Mapped[str] = mapped_column(String(150), index=True, nullable=False)
     nombre_oficial: Mapped[Optional[str]] = mapped_column(String(200))
     provincia_id: Mapped[str] = mapped_column(String(36), ForeignKey("provincias.id"), index=True, nullable=False)

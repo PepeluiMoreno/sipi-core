@@ -49,7 +49,8 @@
       "Bash(PGPASSWORD=\"$DATABASE_PASSWORD\" psql:*)",
       "Bash(/c/Users/Jose/AppData/Local/Programs/Python/Python314/python.exe:*)",
       "Bash(wc:*)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(set PYTHONIOENCODING=utf-8)"
     ]
   }
 }

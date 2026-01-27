@@ -25,25 +25,27 @@ env_path = sipi_core_root / '.env'
 
 if env_path.exists():
     load_dotenv(env_path)
-    print(f"✅ [sipi-core] .env cargado desde: {env_path}")
-else:
-    # Fallback: carga desde entorno
-    load_dotenv()
-    print(f"⚠️  [sipi-core] .env no encontrado en: {env_path}")
+
+# Cargar .env específico del entorno (development/production)
+environment = os.getenv("ENVIRONMENT", "development")
+env_specific_path = sipi_core_root / f'.env.{environment}'
+
+if env_specific_path.exists():
+    load_dotenv(env_specific_path, override=True)
 
 # Get database URL from environment
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
-    # Intentar construirla
+    # Intentar construirla (sin schema en URL - asyncpg no lo soporta)
     user = os.getenv("POSTGRES_USER", "sipi")
     password = os.getenv("POSTGRES_PASSWORD", "sipi")
     host = os.getenv("POSTGRES_SERVICE_NAME", "localhost")
     port = os.getenv("POSTGRES_PORT", "5432")
     db = os.getenv("POSTGRES_DB", "sipi")
-    schema = os.getenv("DATABASE_SCHEMA", "sipi")
-    DATABASE_URL = f"postgresql+asyncpg://{user}:{password}@{host}:{port}/{db}?schema={schema}"
+    DATABASE_URL = f"postgresql+asyncpg://{user}:{password}@{host}:{port}/{db}"
 
-print(f"🔗 [sipi-core] Configurando conexión: {DATABASE_URL[:50]}...")
+# Schema se configura por separado (no como parámetro de URL)
+DATABASE_SCHEMA = os.getenv("DATABASE_SCHEMA", "sipi")
 
 # Create global database manager instance
 db_manager = AsyncDatabaseManager(
@@ -57,4 +59,4 @@ db_manager = AsyncDatabaseManager(
 async_session_maker = db_manager.session_maker
 get_session = db_manager.get_session
 
-__all__ = ["async_session_maker", "get_session", "db_manager", "DATABASE_URL"]
+__all__ = ["async_session_maker", "get_session", "db_manager", "DATABASE_URL", "DATABASE_SCHEMA"]

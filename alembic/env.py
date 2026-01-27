@@ -10,7 +10,8 @@ from sqlalchemy import text
 from alembic import context
 
 # Agregar src al path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+sipi_core_root = Path(__file__).parent.parent
+sys.path.insert(0, str(sipi_core_root / "src"))
 
 # Importar Base y modelos
 from sipi.db.base import Base
@@ -20,14 +21,32 @@ from sipi.db import models  # Esto importa todos los modelos
 # access to the values within the .ini file in use.
 config = context.config
 
-# Configurar la URL desde las variables de entorno
+# Cargar .env desde la raíz del proyecto
 from dotenv import load_dotenv
-load_dotenv()
+env_path = sipi_core_root / '.env'
+if env_path.exists():
+    load_dotenv(env_path)
+
+# Cargar .env específico del entorno
+environment = os.getenv("ENVIRONMENT", "development")
+env_specific_path = sipi_core_root / f'.env.{environment}'
+if env_specific_path.exists():
+    load_dotenv(env_specific_path, override=True)
+
 database_url = os.getenv("DATABASE_URL")
-if database_url:
+if not database_url:
+    # Construir URL desde componentes
+    user = os.getenv("POSTGRES_USER", "sipi")
+    password = os.getenv("POSTGRES_PASSWORD", "sipi")
+    host = os.getenv("POSTGRES_SERVICE_NAME", "localhost")
+    port = os.getenv("POSTGRES_PORT", "5432")
+    db = os.getenv("POSTGRES_DB", "sipi")
+    database_url = f"postgresql://{user}:{password}@{host}:{port}/{db}"
+else:
     # Convertir asyncpg a psycopg2 para alembic
     database_url = database_url.replace("postgresql+asyncpg://", "postgresql://")
-    config.set_main_option("sqlalchemy.url", database_url)
+
+config.set_main_option("sqlalchemy.url", database_url)
 
 # Schema del proyecto
 SCHEMA = os.getenv("DATABASE_SCHEMA", "sipi")
