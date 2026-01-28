@@ -18,10 +18,21 @@ sys.path.insert(0, str(sipi_core_root / "src"))
 # MODELOS
 # ---------------------------------------------------------
 
-from sipi.db.base import Base
+from sipi.db.base import AppBase, GISBase, APP_SCHEMA, GIS_SCHEMA
 from sipi.db import models  # noqa: F401  (importa TODOS los modelos)
 
-target_metadata = Base.metadata
+# Combine metadata from both schemas
+from sqlalchemy import MetaData
+combined_metadata = MetaData()
+
+# Merge tables from both schemas
+for table in AppBase.metadata.tables.values():
+    table.to_metadata(combined_metadata)
+
+for table in GISBase.metadata.tables.values():
+    table.to_metadata(combined_metadata)
+
+target_metadata = combined_metadata
 
 # ---------------------------------------------------------
 # CONFIG
@@ -64,35 +75,46 @@ else:
 config.set_main_option("sqlalchemy.url", database_url)
 
 # ---------------------------------------------------------
-# SCHEMA
+# MULTI-SCHEMA CONFIGURATION
 # ---------------------------------------------------------
 
-SCHEMA = getattr(Base, "schema", None) or os.getenv("DATABASE_SCHEMA", "sipi")
+print(f"\n▶ Alembic Multi-Schema Configuration:")
+print(f"  - APP Schema: {APP_SCHEMA}")
+print(f"  - GIS Schema: {GIS_SCHEMA}")
+print(f"  - Total tables in metadata: {len(combined_metadata.tables)}")
 
-print(f"\n▶ Alembic schema activo: {SCHEMA}")
-print(f"▶ Tablas en metadata: {len(Base.metadata.tables)}")
-for t in Base.metadata.tables.values():
+# Group tables by schema
+app_tables = [t for t in combined_metadata.tables.values() if t.schema == APP_SCHEMA]
+gis_tables = [t for t in combined_metadata.tables.values() if t.schema == GIS_SCHEMA]
+
+print(f"\n▶ APP Schema tables ({len(app_tables)}):")
+for t in app_tables:
+    print(f"  - {t.schema}.{t.name}")
+
+print(f"\n▶ GIS Schema tables ({len(gis_tables)}):")
+for t in gis_tables:
     print(f"  - {t.schema}.{t.name}")
 
 # ---------------------------------------------------------
-# FILTRO CLAVE (MULTI-SCHEMA + POSTGIS)
+# MULTI-SCHEMA FILTER (APP + GIS, EXCLUDE POSTGIS INTERNALS)
 # ---------------------------------------------------------
 
 def include_object(object, name, type_, reflected, compare_to):
     """
-    Autogenerar SOLO para el schema de la aplicación.
-    Ignorar completamente schemas externos (PostGIS, public, etc).
+    Autogenerate for both APP and GIS schemas.
+    Ignore PostGIS internal schemas (topology, tiger, etc).
     """
-
-    # Schemas: solo el nuestro
+    
+    # Schemas: only our application schemas
     if type_ == "schema":
-        return name == SCHEMA
-
-    # Tablas: solo las del schema de la app
+        return name in (APP_SCHEMA, GIS_SCHEMA)
+    
+    # Tables: only from our schemas
     if type_ == "table":
-        return getattr(object, "schema", None) == SCHEMA
-
-    # Índices y constraints: solo si la tabla es nuestra
+        schema = getattr(object, "schema", None)
+        return schema in (APP_SCHEMA, GIS_SCHEMA)
+    
+    # Indexes and constraints: only if table is ours
     if type_ in {
         "index",
         "unique_constraint",
@@ -101,34 +123,37 @@ def include_object(object, name, type_, reflected, compare_to):
     }:
         table = getattr(object, "table", None)
         if table is not None:
-            return table.schema == SCHEMA
+            return table.schema in (APP_SCHEMA, GIS_SCHEMA)
         return False
-
-    # Columnas: permitir geometry SOLO si la tabla es nuestra
+    
+    # Columns: allow geometry ONLY if table is ours
     if type_ == "column":
         table = object.table
-        return table.schema == SCHEMA
-
+        return table.schema in (APP_SCHEMA, GIS_SCHEMA)
+    
     return True
 
 # ---------------------------------------------------------
-# INIT DB (POSTGIS + SCHEMA)
+# INIT DB (POSTGIS + SCHEMAS)
 # ---------------------------------------------------------
 
 def init_database(connection):
+    """Initialize database with PostGIS and required schemas"""
     connection.execute(text("SELECT 1"))
-
+    
+    # Enable PostGIS extensions
     connection.execute(text("CREATE EXTENSION IF NOT EXISTS postgis"))
     connection.execute(text("CREATE EXTENSION IF NOT EXISTS postgis_topology"))
-
+    
+    # Create both schemas
+    connection.execute(text(f"CREATE SCHEMA IF NOT EXISTS {APP_SCHEMA}"))
+    connection.execute(text(f"CREATE SCHEMA IF NOT EXISTS {GIS_SCHEMA}"))
+    
+    # Set search path to include both schemas
     connection.execute(
-        text(f"CREATE SCHEMA IF NOT EXISTS {SCHEMA}")
+        text(f"SET search_path TO {APP_SCHEMA}, {GIS_SCHEMA}, public")
     )
-
-    connection.execute(
-        text(f"SET search_path TO {SCHEMA}, public")
-    )
-
+    
     connection.commit()
 
 # ---------------------------------------------------------
@@ -137,20 +162,20 @@ def init_database(connection):
 
 def run_migrations_offline():
     url = config.get_main_option("sqlalchemy.url")
-
+    
     context.configure(
         url=url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
-        include_schemas=True,            # ✅ CLAVE
-        version_table_schema=SCHEMA,
+        include_schemas=True,            # ✅ MULTI-SCHEMA
+        version_table_schema=APP_SCHEMA,  # Version table in APP schema
         include_object=include_object,
         process_revision_directives=alembic_helpers.writer,
         render_item=alembic_helpers.render_item,
         user_module_prefix="geoalchemy2.",
     )
-
+    
     with context.begin_transaction():
         context.run_migrations()
 
@@ -164,15 +189,15 @@ def run_migrations_online():
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
-
+    
     with connectable.connect() as connection:
         init_database(connection)
-
+        
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
-            include_schemas=True,          # ✅ CLAVE
-            version_table_schema=SCHEMA,
+            include_schemas=True,          # ✅ MULTI-SCHEMA
+            version_table_schema=APP_SCHEMA,  # Version table in APP schema
             include_object=include_object,
             compare_type=True,
             compare_server_default=True,
@@ -180,7 +205,7 @@ def run_migrations_online():
             render_item=alembic_helpers.render_item,
             user_module_prefix="geoalchemy2.",
         )
-
+        
         with context.begin_transaction():
             context.run_migrations()
 

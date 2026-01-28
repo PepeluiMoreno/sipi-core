@@ -1,10 +1,17 @@
 # app/db/base.py
+"""
+Multi-Schema Base Classes for SIPI
+
+This module provides separate base classes for application and GIS models,
+enabling clear separation of concerns and independent schema management.
+"""
+
 import os
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import MetaData
 
 # ---------------------------------------------------------
-# SCHEMA DE APLICACIÓN (ÚNICO QUE MIGRA ALEMBIC)
+# SCHEMA CONFIGURATION
 # ---------------------------------------------------------
 
 APP_SCHEMA = (
@@ -13,25 +20,57 @@ APP_SCHEMA = (
     or "app"
 )
 
+GIS_SCHEMA = (
+    os.getenv("GIS_SCHEMA")
+    or "gis"
+)
+
 # ---------------------------------------------------------
-# METADATA DEL DOMINIO DE LA APP
+# METADATA FOR EACH SCHEMA
 # ---------------------------------------------------------
 
 app_metadata = MetaData(schema=APP_SCHEMA)
+gis_metadata = MetaData(schema=GIS_SCHEMA)
 
 # ---------------------------------------------------------
-# BASE DECLARATIVA MODERNA (SQLAlchemy 2.x)
+# APPLICATION BASE (Business Domain Models)
 # ---------------------------------------------------------
 
-class Base(DeclarativeBase):
+class AppBase(DeclarativeBase):
     """
-    Base ORM del dominio de aplicación.
-
-    - Todas las tablas viven en APP_SCHEMA
-    - Alembic SOLO debe apuntar aquí
-    - GIS NO hereda de esta Base
+    Base ORM for application domain models.
+    
+    - All business logic tables (actors, properties, documents, etc.)
+    - Lives in APP_SCHEMA (default: 'app')
+    - Managed by Alembic migrations
     """
     metadata = app_metadata
-
-    # Expuesto explícitamente (sin hacks)
     schema = APP_SCHEMA
+
+
+# ---------------------------------------------------------
+# GIS BASE (Geographic/Spatial Models)
+# ---------------------------------------------------------
+
+class GISBase(DeclarativeBase):
+    """
+    Base ORM for geographic and spatial models.
+    
+    - All geographic entities (comunidades, provincias, municipios)
+    - Spatial data with PostGIS types
+    - Lives in GIS_SCHEMA (default: 'gis')
+    - Managed by separate Alembic migrations
+    """
+    metadata = gis_metadata
+    schema = GIS_SCHEMA
+
+
+# ---------------------------------------------------------
+# BACKWARD COMPATIBILITY
+# ---------------------------------------------------------
+
+# Alias for existing code - points to AppBase
+Base = AppBase
+
+# Export all bases
+__all__ = ['AppBase', 'GISBase', 'Base', 'APP_SCHEMA', 'GIS_SCHEMA']
