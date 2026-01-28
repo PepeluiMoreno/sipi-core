@@ -6,7 +6,7 @@ from sqlalchemy import String, ForeignKey, Float
 from sqlalchemy.orm import Mapped, mapped_column, declared_attr
 
 if TYPE_CHECKING:
-    from sipi.db.models.geografia import Provincia, Municipio, ComunidadAutonoma
+    from sipi.db.models.geografia_divisiones import Provincia, Municipio, ComunidadAutonoma
     from sipi.db.models.tipologias import TipoVia
 
 class DireccionMixin:
