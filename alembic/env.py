@@ -18,8 +18,8 @@ sys.path.insert(0, str(sipi_core_root / "src"))
 # MODELOS
 # ---------------------------------------------------------
 
-from sipi.db.base import AppBase, GISBase, APP_SCHEMA, GIS_SCHEMA
-from sipi.db import models  # noqa: F401  (importa TODOS los modelos)
+from db.models.base import AppBase, GISBase, APP_SCHEMA, GIS_SCHEMA
+ 
 
 # Combine metadata from both schemas
 from sqlalchemy import MetaData
