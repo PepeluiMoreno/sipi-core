@@ -1,96 +1,231 @@
 # models/__init__.py
-from sipi.db.base import Base
+"""
+SIPI Database Models
+
+This module provides a unified import interface for all database models,
+organized by domain and schema:
+
+- APP Schema: Business domain models (actors, properties, documents, etc.)
+- GIS Schema: Geographic and spatial models (administrative divisions, OSM data)
+"""
+
+from sipi.db.base import Base, AppBase, GISBase
 from sipi.db.mixins import UUIDPKMixin, AuditMixin
 
-# Actores
+# ============================================================================
+# ACTORS (APP Schema) - Organized by type
+# ============================================================================
+
 from .actores import (
-    Privado, Administracion, AdministracionTitular, AgenciaInmobiliaria,
-    ColegioProfesional, Diocesis, DiocesisTitular, Notaria, NotariaTitular,
-    Tecnico, RegistroPropiedad, RegistroPropiedadTitular,
-    EntidadReligiosa, EntidadReligiosaTitular
+    # Base classes
+    PersonaMixin, TitularBase,
+    
+    # Notaries
+    Notaria, NotariaTitular,
+    
+    # Property Registrars
+    RegistroPropiedad, RegistroPropiedadTitular,
+    
+    # Public Administrations
+    Administracion, AdministracionTitular,
+    
+    # Religious Entities
+    Diocesis, DiocesisTitular,
+    EntidadReligiosa, EntidadReligiosaTitular,
+    
+    # Technical Professionals
+    Tecnico, ColegioProfesional,
+    
+    # Private Actors
+    Privado, AgenciaInmobiliaria,
 )
 
-# Tipologías
+# ============================================================================
+# GEOGRAPHY (GIS Schema)
+# ============================================================================
+
+from .geografia import (
+    ComunidadAutonoma, 
+    Provincia, 
+    Municipio
+)
+
+# ============================================================================
+# TYPOLOGIES (APP Schema)
+# ============================================================================
+
 from .tipologias import (
     TipoEstadoConservacion, TipoEstadoTratamiento, TipoRolTecnico,
-    TipoCertificacionPropiedad, TipoTituloPropiedad, TipoDocumento, TipoInmueble, TipoMimeDocumento,
-    TipoPersona, TipoTransmision, TipoVia, TipoEntidadReligiosa,
-    TipoLicencia, FuenteDocumental, TipoUsoInmueble
+    TipoCertificacionPropiedad, TipoTituloPropiedad, TipoDocumento, 
+    TipoInmueble, TipoMimeDocumento, TipoPersona, TipoTransmision, 
+    TipoVia, TipoEntidadReligiosa, TipoLicencia, FuenteDocumental, 
+    TipoUsoInmueble
 )
 
-# Geografía
-from .geografia import ComunidadAutonoma, Provincia, Municipio
+# ============================================================================
+# DOCUMENTS (APP Schema)
+# ============================================================================
 
-# Documentos
-from .documentos import Documento, InmuebleDocumento
+from .documentos import (
+    Documento, 
+    InmuebleDocumento
+)
 
-# Inmuebles (incluye InmuebleCita, InmuebleUso, InmuebleNivelProteccion)
+# ============================================================================
+# PROPERTIES (APP Schema)
+# ============================================================================
+
 from .inmuebles import (
-    Inmueble, Inmatriculacion, InmuebleDenominacion,
-    InmuebleOSMExt, InmuebleWDExt, InmuebleCita, InmuebleUso, InmuebleNivelProteccion
+    Inmueble, 
+    Inmatriculacion, 
+    InmuebleDenominacion,
+    InmuebleOSMExt, 
+    InmuebleWDExt, 
+    InmuebleCita, 
+    InmuebleUso, 
+    InmuebleNivelProteccion
 )
 
-# Historiografía
-from .historiografia import FuenteHistoriografica
+# ============================================================================
+# HISTORIOGRAPHY (APP Schema)
+# ============================================================================
 
-# Figuras de Protección
-from .figuras_proteccion import FiguraProteccion, NivelProteccion
+from .historiografia import (
+    FuenteHistoriografica
+)
 
-# Transmisiones
-from .transmisiones import Transmision, TransmisionAnunciante
+# ============================================================================
+# PROTECTION FIGURES (APP Schema)
+# ============================================================================
 
-# Intervenciones
-from .intervenciones import Intervencion, IntervencionTecnico
+from .figuras_proteccion import (
+    FiguraProteccion, 
+    NivelProteccion
+)
 
-# Subvenciones
-from .subvenciones import IntervencionSubvencion, SubvencionAdministracion
+# ============================================================================
+# TRANSMISSIONS (APP Schema)
+# ============================================================================
 
-# Usuarios
-from .users import Usuario, Rol
+from .transmisiones import (
+    Transmision, 
+    TransmisionAnunciante
+)
 
-# Discovery (Anuncios)
-from .discovery import InmuebleRaw, DeteccionAnuncio
+# ============================================================================
+# INTERVENTIONS (APP Schema)
+# ============================================================================
 
-# OSM
-from .osm import OSMPlace
+from .intervenciones import (
+    Intervencion, 
+    IntervencionTecnico
+)
 
-# Historial (Sistema de Inteligencia) - DEPRECADO
-# from .inmuebles import InmuebleEvento
-# from .tipologias import EventoRegistrable
+# ============================================================================
+# SUBSIDIES (APP Schema)
+# ============================================================================
+
+from .subvenciones import (
+    IntervencionSubvencion, 
+    SubvencionAdministracion
+)
+
+# ============================================================================
+# USERS (APP Schema)
+# ============================================================================
+
+from .users import (
+    Usuario, 
+    Rol
+)
+
+# ============================================================================
+# DISCOVERY (APP Schema)
+# ============================================================================
+
+from .discovery import (
+    InmuebleRaw, 
+    DeteccionAnuncio
+)
+
+# ============================================================================
+# OSM (GIS Schema - could be moved to geografia package)
+# ============================================================================
+
+from .osm import (
+    OSMPlace
+)
+
+# ============================================================================
+# EXPORTS
+# ============================================================================
 
 __all__ = [
-    'Base', 'UUIDPKMixin', 'AuditMixin',
-    # Actores
-    'Privado', 'Administracion', 'AdministracionTitular', 'AgenciaInmobiliaria',
-    'ColegioProfesional', 'Diocesis', 'DiocesisTitular', 'Notaria', 'NotariaTitular',
-    'Tecnico', 'RegistroPropiedad', 'RegistroPropiedadTitular',
+    # Base classes
+    'Base', 'AppBase', 'GISBase',
+    'UUIDPKMixin', 'AuditMixin',
+    
+    # Actor base classes
+    'PersonaMixin', 'TitularBase',
+    
+    # Notaries
+    'Notaria', 'NotariaTitular',
+    
+    # Property Registrars
+    'RegistroPropiedad', 'RegistroPropiedadTitular',
+    
+    # Public Administrations
+    'Administracion', 'AdministracionTitular',
+    
+    # Religious Entities
+    'Diocesis', 'DiocesisTitular',
     'EntidadReligiosa', 'EntidadReligiosaTitular',
-    # Tipologías
-    'TipoEstadoConservacion', 'TipoEstadoTratamiento', 'TipoRolTecnico',
-    'TipoCertificacionPropiedad', 'TipoTituloPropiedad', 'TipoDocumento', 'TipoInmueble', 'TipoMimeDocumento',
-    'TipoPersona', 'TipoTransmision', 'TipoVia', 'TipoEntidadReligiosa',
-    'TipoLicencia', 'FuenteDocumental', 'TipoUsoInmueble',
-    # Geografía
+    
+    # Technical Professionals
+    'Tecnico', 'ColegioProfesional',
+    
+    # Private Actors
+    'Privado', 'AgenciaInmobiliaria',
+    
+    # Geography (GIS Schema)
     'ComunidadAutonoma', 'Provincia', 'Municipio',
-    # Documentos
+    
+    # Typologies
+    'TipoEstadoConservacion', 'TipoEstadoTratamiento', 'TipoRolTecnico',
+    'TipoCertificacionPropiedad', 'TipoTituloPropiedad', 'TipoDocumento', 
+    'TipoInmueble', 'TipoMimeDocumento', 'TipoPersona', 'TipoTransmision', 
+    'TipoVia', 'TipoEntidadReligiosa', 'TipoLicencia', 'FuenteDocumental', 
+    'TipoUsoInmueble',
+    
+    # Documents
     'Documento', 'InmuebleDocumento',
-    # Inmuebles
+    
+    # Properties
     'Inmueble', 'Inmatriculacion', 'InmuebleDenominacion',
-    'InmuebleOSMExt', 'InmuebleWDExt', 'InmuebleCita', 'InmuebleUso', 'InmuebleNivelProteccion', 'InmuebleEvento',
-    # Historiografía
+    'InmuebleOSMExt', 'InmuebleWDExt', 'InmuebleCita', 'InmuebleUso', 
+    'InmuebleNivelProteccion',
+    
+    # Historiography
     'FuenteHistoriografica',
-    # Figuras de Protección
+    
+    # Protection Figures
     'FiguraProteccion', 'NivelProteccion',
-    # Transmisiones
+    
+    # Transmissions
     'Transmision', 'TransmisionAnunciante',
-    # Intervenciones
+    
+    # Interventions
     'Intervencion', 'IntervencionTecnico',
-    # Subvenciones
+    
+    # Subsidies
     'IntervencionSubvencion', 'SubvencionAdministracion',
-    # Usuarios
+    
+    # Users
     'Usuario', 'Rol',
+    
     # Discovery
     'InmuebleRaw', 'DeteccionAnuncio',
+    
     # OSM
     'OSMPlace',
 ]
