@@ -13,26 +13,25 @@ class ComunidadAutonoma(UUIDPKMixin, AuditMixin, Base):
     __tablename__ = "comunidades_autonomas"
 
     codigo_ine: Mapped[str] = mapped_column(String(2), unique=True, index=True, nullable=False)
-    nombre: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
-    nombre_oficial: Mapped[Optional[str]] = mapped_column(String(150))
-    capital: Mapped[Optional[str]] = mapped_column(String(100))
-    activo: Mapped[bool] = mapped_column(Boolean, default=True, index=True, nullable=False)
+    nombre_oficial: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
+    nombre_cooficial: Mapped[Optional[str]] = mapped_column(String(100))
+    nombre_alternativo: Mapped[Optional[str]] = mapped_column(String(100))
+
 
     # Relaciones
     provincias: Mapped[list["Provincia"]] = relationship("Provincia", back_populates="comunidad_autonoma", cascade="all, delete-orphan")
-    municipios: Mapped[list["Municipio"]] = relationship("Municipio", back_populates="comunidad_autonoma")
     inmuebles: Mapped[list["Inmueble"]] = relationship("Inmueble", back_populates="comunidad_autonoma")
     figuras_proteccion: Mapped[list["FiguraProteccion"]] = relationship("FiguraProteccion", back_populates="comunidad_autonoma")
     administraciones: Mapped[list["Administracion"]] = relationship("Administracion", back_populates="comunidad_autonoma")
 
     __table_args__ = (
         Index('ix_ccaa_codigo_ine', 'codigo_ine'),
-        Index('ix_ccaa_nombre', 'nombre'),
-        Index('ix_ccaa_activo', 'activo'),
+        Index('ix_ccaa_nombre', 'nombre_oficial'),
+        
     )
 
     def __repr__(self) -> str:
-        return f"<ComunidadAutonoma {self.codigo_ine} - {self.nombre}>"
+        return f"<ComunidadAutonoma {self.codigo_ine} - {self.nombre_oficial}>"
 
 
 class Provincia(UUIDPKMixin, AuditMixin, Base):
@@ -40,11 +39,11 @@ class Provincia(UUIDPKMixin, AuditMixin, Base):
     __tablename__ = "provincias"
 
     codigo_ine: Mapped[str] = mapped_column(String(2), unique=True, index=True, nullable=False)
-    nombre: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
-    nombre_oficial: Mapped[Optional[str]] = mapped_column(String(150))
-    capital: Mapped[Optional[str]] = mapped_column(String(100))
+    nombre_oficial: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
+    nombre_cooficial: Mapped[Optional[str]] = mapped_column(String(100))
+    nombre_alternativo: Mapped[Optional[str]] = mapped_column(String(100))
     comunidad_autonoma_id: Mapped[str] = mapped_column(String(36), ForeignKey("comunidades_autonomas.id"), index=True, nullable=False)
-    activo: Mapped[bool] = mapped_column(Boolean, default=True, index=True, nullable=False)
+  
 
     # Relaciones
     comunidad_autonoma: Mapped["ComunidadAutonoma"] = relationship("ComunidadAutonoma", back_populates="provincias")
@@ -54,13 +53,13 @@ class Provincia(UUIDPKMixin, AuditMixin, Base):
 
     __table_args__ = (
         Index('ix_provincia_codigo_ine', 'codigo_ine'),
-        Index('ix_provincia_nombre', 'nombre'),
+        Index('ix_provincia_nombre', 'nombre_oficial'),
         Index('ix_provincia_ccaa', 'comunidad_autonoma_id'),
-        Index('ix_provincia_activo', 'activo'),
-    )
+       
+     )
 
     def __repr__(self) -> str:
-        return f"<Provincia {self.codigo_ine} - {self.nombre}>"
+        return f"<Provincia {self.codigo_ine} - {self.nombre_oficial}>"
 
 
 class Municipio(UUIDPKMixin, AuditMixin, Base):
@@ -68,16 +67,16 @@ class Municipio(UUIDPKMixin, AuditMixin, Base):
     __tablename__ = "municipios"
     
     codigo_ine: Mapped[str] = mapped_column(String(5), unique=True, index=True, nullable=False)
-    nombre: Mapped[str] = mapped_column(String(150), index=True, nullable=False)
-    nombre_oficial: Mapped[Optional[str]] = mapped_column(String(200))
+    codigo_ine_7: Mapped[Optional[str]] = mapped_column(String(7), unique=True, index=True)
+    nombre_oficial: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
+    nombre_cooficial: Mapped[Optional[str]] = mapped_column(String(100))
+    nombre_alternativo: Mapped[Optional[str]] = mapped_column(String(100)) 
     provincia_id: Mapped[str] = mapped_column(String(36), ForeignKey("provincias.id"), index=True, nullable=False)
-    comunidad_autonoma_id: Mapped[str] = mapped_column(String(36), ForeignKey("comunidades_autonomas.id"), index=True, nullable=False)
-    activo: Mapped[bool] = mapped_column(Boolean, default=True, index=True)
+ 
     
     # Relaciones
     provincia: Mapped["Provincia"] = relationship("Provincia", back_populates="municipios")
-    comunidad_autonoma: Mapped["ComunidadAutonoma"] = relationship("ComunidadAutonoma", back_populates="municipios")
-    
+        
     # Relaciones 1:M con nombres descriptivos específicos
     inmuebles: Mapped[list["Inmueble"]] = relationship("Inmueble", back_populates="municipio")
     administraciones: Mapped[list["Administracion"]] = relationship("Administracion", back_populates="municipio_sede")
@@ -90,5 +89,13 @@ class Municipio(UUIDPKMixin, AuditMixin, Base):
     diocesis: Mapped[list["Diocesis"]] = relationship("Diocesis", back_populates="municipio_sede")
     entidades_religiosas: Mapped[list["EntidadReligiosa"]] = relationship("EntidadReligiosa", back_populates="municipio_sede")
     
+    __table_args__ = (
+        Index('ix_municipio_codigo_ine', 'codigo_ine'),
+        Index('ix_municipio_nombre', 'nombre_oficial'),
+        Index('ix_municipio_provincia', 'provincia_id'),
+       
+     )
+
+
     def __repr__(self) -> str:
-        return f"<Municipio {self.codigo_ine} - {self.nombre}>"
+        return f"<Municipio {self.codigo_ine} - {self.nombre_oficial}>"
