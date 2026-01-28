@@ -22,7 +22,7 @@ La Fase 1 del sistema de inteligencia SIPI está **completada y desplegada**. Se
 
 ### 1. Modelos de Datos en `sipi-core`
 
-#### ✅ OSMPlace (`src/sipi/db/models/osm.py`)
+#### ✅ OSMPlace (`sipi/db/models/osm.py`)
 Censo local de lugares extraídos de OpenStreetMap para geolocalización.
 
 **Campos**:
@@ -35,11 +35,11 @@ Censo local de lugares extraídos de OpenStreetMap para geolocalización.
 - `geom` (Geometry POINT) - Coordenadas geográficas
 - `tags` (JSONB) - Tags adicionales de OSM
 
-**Ubicación**: `sipi-core/src/sipi/db/models/osm.py`
+**Ubicación**: `sipi-core/sipi/db/models/osm.py`
 
 ---
 
-#### ✅ EventoHistorial (`src/sipi/db/models/historial.py`)
+#### ✅ EventoHistorial (`sipi/db/models/historial.py`)
 Expediente/Bitácora del inmueble: eventos detectados automáticamente.
 
 **Campos**:
@@ -60,11 +60,11 @@ Expediente/Bitácora del inmueble: eventos detectados automáticamente.
 - `DECLARACION_BIC` - Declarado Bien de Interés Cultural
 - `CAMBIO_VISITABILIDAD` - Cambio en régimen de visitas
 
-**Ubicación**: `sipi-core/src/sipi/db/models/historial.py`
+**Ubicación**: `sipi-core/sipi/db/models/historial.py`
 
 ---
 
-#### ✅ Inmueble - Campos Añadidos (`src/sipi/db/models/inmuebles.py`)
+#### ✅ Inmueble - Campos Añadidos (`sipi/db/models/inmuebles.py`)
 
 **Nuevos campos**:
 
@@ -89,7 +89,7 @@ Expediente/Bitácora del inmueble: eventos detectados automáticamente.
 5. **`enlace_web_visitas`** (String 500, nullable)
    - URL con información de visitas
 
-**Ubicación**: `sipi-core/src/sipi/db/models/inmuebles.py:28-95`
+**Ubicación**: `sipi-core/sipi/db/models/inmuebles.py:28-95`
 
 ---
 
@@ -245,7 +245,7 @@ Una vez verificada la Fase 1, continuar con:
 
 ```
 sipi-core/
-├── src/sipi/db/models/
+├── sipi/db/models/
 │   ├── __init__.py          [MODIFICADO] - Exports OSMPlace, EventoHistorial
 │   ├── osm.py               [NUEVO] - Modelo OSMPlace
 │   ├── historial.py        [NUEVO] - Modelo EventoHistorial + TipoEventoHistorial

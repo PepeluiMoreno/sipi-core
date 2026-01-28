@@ -6,7 +6,7 @@ This document summarizes the implementation of the multi-schema architecture for
 
 ## What Was Implemented
 
-### 1. Multi-Schema Base Classes ([`src/sipi/db/base.py`](../src/sipi/db/base.py))
+### 1. Multi-Schema Base Classes ([`sipi/db/base.py`](../sipi/db/base.py))
 
 Created separate base classes for different schema types:
 
@@ -45,12 +45,12 @@ SET search_path TO app, gis, public
 Created new package structure for geographic models:
 
 ```
-src/sipi/db/models/geografia/
+sipi/db/models/geografia/
 ├── __init__.py
 └── divisiones.py
 ```
 
-**[`divisiones.py`](../src/sipi/db/models/geografia/divisiones.py)** contains:
+**[`divisiones.py`](../sipi/db/models/geografia/divisiones.py)** contains:
 - `ComunidadAutonoma`: Autonomous communities (GIS schema)
 - `Provincia`: Provinces (GIS schema)
 - `Municipio`: Municipalities (GIS schema)
@@ -63,10 +63,10 @@ All geographic models now:
 
 ### 4. Actor Models Split
 
-Split the monolithic [`actores.py`](../src/sipi/db/models/actores.py) (298 lines) into specialized modules:
+Split the monolithic [`actores.py`](../sipi/db/models/actores.py) (298 lines) into specialized modules:
 
 ```
-src/sipi/db/models/actores/
+sipi/db/models/actores/
 ├── __init__.py
 ├── _base.py                    # Base classes and mixins
 ├── notarios.py                 # Notaries and notarial offices
@@ -77,37 +77,37 @@ src/sipi/db/models/actores/
 └── privados.py                 # Private individuals and companies
 ```
 
-#### [`_base.py`](../src/sipi/db/models/actores/_base.py)
+#### [`_base.py`](../sipi/db/models/actores/_base.py)
 Common base classes:
 - `PersonaMixin`: For physical and legal persons
 - `TitularBase`: For time-bound holders/managers
 
-#### [`notarios.py`](../src/sipi/db/models/actores/notarios.py)
+#### [`notarios.py`](../sipi/db/models/actores/notarios.py)
 - `Notaria`: Notarial office
 - `NotariaTitular`: Notary (person) holding an office
 
-#### [`registradores.py`](../src/sipi/db/models/actores/registradores.py)
+#### [`registradores.py`](../sipi/db/models/actores/registradores.py)
 - `RegistroPropiedad`: Property registry
 - `RegistroPropiedadTitular`: Property registrar (person)
 
-#### [`administraciones.py`](../src/sipi/db/models/actores/administraciones.py)
+#### [`administraciones.py`](../sipi/db/models/actores/administraciones.py)
 - `Administracion`: Public administration (all levels)
   - Hierarchical organization support
   - Temporal validity tracking
   - Parent-child relationships
 - `AdministracionTitular`: Administration manager
 
-#### [`entidades_religiosas.py`](../src/sipi/db/models/actores/entidades_religiosas.py)
+#### [`entidades_religiosas.py`](../sipi/db/models/actores/entidades_religiosas.py)
 - `Diocesis`: Catholic diocese
 - `DiocesisTitular`: Bishop
 - `EntidadReligiosa`: Religious orders/congregations
 - `EntidadReligiosaTitular`: Religious entity leader
 
-#### [`tecnicos.py`](../src/sipi/db/models/actores/tecnicos.py)
+#### [`tecnicos.py`](../sipi/db/models/actores/tecnicos.py)
 - `Tecnico`: Technical professional (architect, engineer, etc.)
 - `ColegioProfesional`: Professional association
 
-#### [`privados.py`](../src/sipi/db/models/actores/privados.py)
+#### [`privados.py`](../sipi/db/models/actores/privados.py)
 - `Privado`: Private individual or legal entity
 - `AgenciaInmobiliaria`: Real estate agency
 
@@ -140,7 +140,7 @@ Common base classes:
    - Optional fields properly marked
    - Relationship types specified
 
-### 6. Updated Model Imports ([`src/sipi/db/models/__init__.py`](../src/sipi/db/models/__init__.py))
+### 6. Updated Model Imports ([`sipi/db/models/__init__.py`](../sipi/db/models/__init__.py))
 
 Reorganized imports to reflect new structure:
 - Imports from `actores` package
@@ -264,25 +264,25 @@ If issues arise:
 ### Created
 - `docs/MULTI_SCHEMA_ARCHITECTURE.md`
 - `docs/IMPLEMENTATION_SUMMARY.md`
-- `src/sipi/db/models/geografia/__init__.py`
-- `src/sipi/db/models/geografia/divisiones.py`
-- `src/sipi/db/models/actores/__init__.py`
-- `src/sipi/db/models/actores/_base.py`
-- `src/sipi/db/models/actores/notarios.py`
-- `src/sipi/db/models/actores/registradores.py`
-- `src/sipi/db/models/actores/administraciones.py`
-- `src/sipi/db/models/actores/entidades_religiosas.py`
-- `src/sipi/db/models/actores/tecnicos.py`
-- `src/sipi/db/models/actores/privados.py`
+- `sipi/db/models/geografia/__init__.py`
+- `sipi/db/models/geografia/divisiones.py`
+- `sipi/db/models/actores/__init__.py`
+- `sipi/db/models/actores/_base.py`
+- `sipi/db/models/actores/notarios.py`
+- `sipi/db/models/actores/registradores.py`
+- `sipi/db/models/actores/administraciones.py`
+- `sipi/db/models/actores/entidades_religiosas.py`
+- `sipi/db/models/actores/tecnicos.py`
+- `sipi/db/models/actores/privados.py`
 
 ### Modified
-- `src/sipi/db/base.py` - Added `AppBase`, `GISBase`
+- `sipi/db/base.py` - Added `AppBase`, `GISBase`
 - `alembic/env.py` - Multi-schema support
-- `src/sipi/db/models/__init__.py` - Updated imports
+- `sipi/db/models/__init__.py` - Updated imports
 
 ### Preserved (for safety)
-- `src/sipi/db/models/actores.py` - Original file
-- `src/sipi/db/models/geografia.py` - Original file
+- `sipi/db/models/actores.py` - Original file
+- `sipi/db/models/geografia.py` - Original file
 
 ## Conclusion
 

@@ -54,7 +54,7 @@ Se había diseñado un sistema complejo con:
 
 ### 1. Modelos Creados/Modificados
 
-#### ✅ Nuevo: `EventoHistorial` ([historial.py](../../src/sipi/db/models/historial.py))
+#### ✅ Nuevo: `EventoHistorial` ([historial.py](../../sipi/db/models/historial.py))
 
 ```python
 class TipoEventoHistorial(str, Enum):
@@ -84,7 +84,7 @@ class EventoHistorial(UUIDPKMixin, AuditMixin, Base):
 
 ---
 
-#### ✅ Modificado: `Inmueble` ([inmuebles.py](../../src/sipi/db/models/inmuebles.py))
+#### ✅ Modificado: `Inmueble` ([inmuebles.py](../../sipi/db/models/inmuebles.py))
 
 **Nueva relación:**
 ```python
@@ -255,7 +255,7 @@ Actualizados todos los nombres de modelos:
 
 ```
 sipi-core/
-├── src/sipi/db/models/
+├── sipi/db/models/
 │   ├── inmuebles.py         ✅ MODIFICADO - Agregadas: timeline_procesos, historial
 │   ├── historial.py         ✅ NUEVO - EventoHistorial, TipoEventoHistorial
 │   ├── __init__.py          ✅ MODIFICADO - Exportar nuevos modelos
@@ -336,8 +336,8 @@ Estos scrapers alimentarán la tabla `historial_inmueble` con eventos detectados
 - [Arquitectura Historial Inmuebles](ARQUITECTURA_HISTORIAL_INMUEBLES.md) - Decisión arquitectónica completa
 - [Phase 1 Completed](PHASE1_COMPLETED.md) - Implementación del sistema de inteligencia
 - [Implementation Plan](implementation_plan.md) - Plan general del proyecto
-- [Modelo Inmueble](../../src/sipi/db/models/inmuebles.py) - Modelo principal
-- [Modelo Historial](../../src/sipi/db/models/historial.py) - Sistema de eventos automáticos
+- [Modelo Inmueble](../../sipi/db/models/inmuebles.py) - Modelo principal
+- [Modelo Historial](../../sipi/db/models/historial.py) - Sistema de eventos automáticos
 
 ---
 

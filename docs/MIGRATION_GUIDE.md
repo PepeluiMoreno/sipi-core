@@ -294,8 +294,8 @@ pytest tests/integration/test_geography.py
 
 ```bash
 # Only after everything is verified!
-git rm src/sipi/db/models/actores.py
-git rm src/sipi/db/models/geografia.py
+git rm sipi/db/models/actores.py
+git rm sipi/db/models/geografia.py
 
 # Commit changes
 git add .

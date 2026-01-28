@@ -36,7 +36,7 @@ Se diseñó inicialmente un sistema complejo con:
 
 ### 1. Tres Modelos Específicos (Ya existentes)
 
-#### `Inmatriculacion` ([inmuebles.py:120-138](../../src/sipi/db/models/inmuebles.py#L120-L138))
+#### `Inmatriculacion` ([inmuebles.py:120-138](../../sipi/db/models/inmuebles.py#L120-L138))
 Registro inicial de propiedad en el Registro de la Propiedad.
 
 **Campos clave**:
@@ -49,7 +49,7 @@ Registro inicial de propiedad en el Registro de la Propiedad.
 
 ---
 
-#### `Transmision` ([transmisiones.py:12-39](../../src/sipi/db/models/transmisiones.py#L12-L39))
+#### `Transmision` ([transmisiones.py:12-39](../../sipi/db/models/transmisiones.py#L12-L39))
 Compraventas y transferencias de propiedad.
 
 **Campos clave**:
@@ -71,7 +71,7 @@ Compraventas y transferencias de propiedad.
 
 ---
 
-#### `Actuacion` ([actuaciones.py:11-31](../../src/sipi/db/models/actuaciones.py#L11-L31))
+#### `Actuacion` ([actuaciones.py:11-31](../../sipi/db/models/actuaciones.py#L11-L31))
 Intervenciones físicas sobre el inmueble (rehabilitaciones, restauraciones).
 
 **Campos clave**:
@@ -89,7 +89,7 @@ Intervenciones físicas sobre el inmueble (rehabilitaciones, restauraciones).
 
 ### 2. Propiedad Computada: `timeline_procesos`
 
-**Ubicación**: [inmuebles.py:119-177](../../src/sipi/db/models/inmuebles.py#L119-L177)
+**Ubicación**: [inmuebles.py:119-177](../../sipi/db/models/inmuebles.py#L119-L177)
 
 **Propósito**: Generar un timeline unificado de todos los procesos que han afectado al inmueble.
 
@@ -165,7 +165,7 @@ query TimelineInmueble($id: ID!) {
 
 **Separado de los procesos formales**, el sistema de inteligencia usa `EventoHistorial` para **detectar automáticamente eventos** desde fuentes externas y registrarlos en el Historial/bitácora del inmueble.
 
-### Modelo: `EventoHistorial` ([Historial.py:27-56](../../src/sipi/db/models/Historial.py#L27-L56))
+### Modelo: `EventoHistorial` ([Historial.py:27-56](../../sipi/db/models/Historial.py#L27-L56))
 
 **Propósito**: Historial digital del inmueble que traza eventos detectados automáticamente por scrapers y ETL.
 
@@ -255,7 +255,7 @@ query TimelineInmueble($id: ID!) {
 
 ```
 sipi-core/
-├── src/sipi/db/models/
+├── sipi/db/models/
 │   ├── inmuebles.py         [MODIFICADO] - Agregada propiedad timeline_procesos y relación Historial
 │   ├── __init__.py          [MODIFICADO] - Exportar EventoHistorial y TipoEventoHistorial
 │   ├── transmisiones.py     [SIN CAMBIOS] - Modelo ya existente
@@ -290,7 +290,7 @@ sipi-core/
 
 - [Phase 1 Completed](PHASE1_COMPLETED.md) - Implementación del sistema de inteligencia
 - [Implementation Plan](implementation_plan.md) - Plan general del proyecto
-- [Modelos de Inmuebles](../../src/sipi/db/models/inmuebles.py)
-- [Modelos de Transmisiones](../../src/sipi/db/models/transmisiones.py)
-- [Modelos de Actuaciones](../../src/sipi/db/models/actuaciones.py)
-- [Historial del Inmueble](../../src/sipi/db/models/Historial.py)
+- [Modelos de Inmuebles](../../sipi/db/models/inmuebles.py)
+- [Modelos de Transmisiones](../../sipi/db/models/transmisiones.py)
+- [Modelos de Actuaciones](../../sipi/db/models/actuaciones.py)
+- [Historial del Inmueble](../../sipi/db/models/Historial.py)

@@ -28,7 +28,7 @@ This document provides a complete overview of the multi-schema architecture impl
 ### 2. Actor Models Reorganization
 
 **Before:**
-- Single monolithic file: [`actores.py`](../src/sipi/db/models/actores.py) (298 lines)
+- Single monolithic file: [`actores.py`](../sipi/db/models/actores.py) (298 lines)
 - All actor types mixed together
 - Difficult to navigate and maintain
 
@@ -36,7 +36,7 @@ This document provides a complete overview of the multi-schema architecture impl
 Organized into specialized modules:
 
 ```
-src/sipi/db/models/actores/
+sipi/db/models/actores/
 ├── __init__.py              # Package exports
 ├── _base.py                 # Base classes and mixins
 ├── notarios.py              # Notaries and notarial offices
@@ -56,7 +56,7 @@ src/sipi/db/models/actores/
 
 **After:**
 ```
-src/sipi/db/models/geografia/
+sipi/db/models/geografia/
 ├── __init__.py
 └── divisiones.py            # ComunidadAutonoma, Provincia, Municipio
 ```
@@ -115,7 +115,7 @@ docs/
 ├── MIGRATION_GUIDE.md              # Migration instructions
 └── MULTI_SCHEMA_README.md          # This file
 
-src/sipi/db/models/
+sipi/db/models/
 ├── actores/                        # Actor models package
 │   ├── __init__.py
 │   ├── _base.py
@@ -133,7 +133,7 @@ src/sipi/db/models/
 ### Modified Files
 
 ```
-src/sipi/db/
+sipi/db/
 ├── base.py                         # Added AppBase, GISBase
 └── models/__init__.py              # Updated imports
 

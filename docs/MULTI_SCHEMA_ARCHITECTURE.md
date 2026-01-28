@@ -65,7 +65,7 @@ Contains spatial and geographic data:
 ### Application Models (`app` schema)
 
 ```
-src/sipi/db/models/
+sipi/db/models/
 ├── actores/
 │   ├── __init__.py
 │   ├── notarios.py          # Notaria, NotariaTitular
@@ -87,7 +87,7 @@ src/sipi/db/models/
 ### Geographic Models (`gis` schema)
 
 ```
-src/sipi/db/models/
+sipi/db/models/
 ├── geografia/
 │   ├── __init__.py
 │   ├── divisiones.py        # ComunidadAutonoma, Provincia, Municipio
