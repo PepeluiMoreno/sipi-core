@@ -20,7 +20,7 @@ from sipi.db.mixins import (
     ContactoDireccionMixin,
     TitularidadMixin
 )
-from ._base import TitularBase
+from .actores_base import TitularBase
 
 
 class Diocesis(UUIDPKMixin, AuditMixin, ContactoDireccionMixin, 

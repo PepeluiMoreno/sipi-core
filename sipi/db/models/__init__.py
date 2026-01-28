@@ -16,37 +16,37 @@ from sipi.db.mixins import UUIDPKMixin, AuditMixin
 # ACTORS (APP Schema) - Organized by type
 # ============================================================================
 
-from .actores import (
-    # Base classes
-    PersonaMixin, TitularBase,
-    
-    # Notaries
-    Notaria, NotariaTitular,
-    
-    # Property Registrars
-    RegistroPropiedad, RegistroPropiedadTitular,
-    
-    # Public Administrations
-    Administracion, AdministracionTitular,
-    
-    # Religious Entities
+# Base classes
+from .actores_base import PersonaMixin, TitularBase
+
+# Notaries
+from .notarios import Notaria, NotariaTitular
+
+# Property Registrars
+from .registradores import RegistroPropiedad, RegistroPropiedadTitular
+
+# Public Administrations
+from .administraciones import Administracion, AdministracionTitular
+
+# Religious Entities
+from .entidades_religiosas import (
     Diocesis, DiocesisTitular,
-    EntidadReligiosa, EntidadReligiosaTitular,
-    
-    # Technical Professionals
-    Tecnico, ColegioProfesional,
-    
-    # Private Actors
-    Privado, AgenciaInmobiliaria,
+    EntidadReligiosa, EntidadReligiosaTitular
 )
+
+# Technical Professionals
+from .tecnicos import Tecnico, ColegioProfesional
+
+# Private Actors
+from .privados import Privado, AgenciaInmobiliaria
 
 # ============================================================================
 # GEOGRAPHY (GIS Schema)
 # ============================================================================
 
-from .geografia import (
-    ComunidadAutonoma, 
-    Provincia, 
+from .geografia_divisiones import (
+    ComunidadAutonoma,
+    Provincia,
     Municipio
 )
 

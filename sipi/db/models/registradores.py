@@ -19,7 +19,7 @@ from sipi.db.mixins import (
     ContactoDireccionMixin,
     TitularidadMixin
 )
-from ._base import TitularBase
+from .actores_base import TitularBase
 
 
 class RegistroPropiedad(UUIDPKMixin, AuditMixin, IdentificacionMixin, 

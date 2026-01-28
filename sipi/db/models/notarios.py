@@ -17,7 +17,7 @@ from sipi.db.mixins import (
     AuditMixin, 
     ContactoDireccionMixin
 )
-from ._base import TitularBase
+from .actores_base import TitularBase
 
 
 class Notaria(UUIDPKMixin, AuditMixin, ContactoDireccionMixin, AppBase):

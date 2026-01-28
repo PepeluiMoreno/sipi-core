@@ -17,7 +17,7 @@ from sipi.db.mixins import (
     AuditMixin, 
     ContactoDireccionMixin
 )
-from ._base import PersonaMixin
+from .actores_base import PersonaMixin
 
 
 class Privado(UUIDPKMixin, AuditMixin, PersonaMixin, 
