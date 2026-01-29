@@ -192,18 +192,18 @@ The system automatically:
 
 ```python
 # Import from main package
-from sipi.db.models import Notaria, Municipio, Administracion
+from sipi.models import Notaria, Municipio, Administracion
 
 # Or import from subpackages
-from sipi.db.models.actores import Notaria, Administracion
-from sipi.db.models.geografia import Municipio
+from sipi.models.actores import Notaria, Administracion
+from sipi.models.geografia import Municipio
 ```
 
 ### Querying Across Schemas
 
 ```python
 from sqlalchemy import select
-from sipi.db.models import Notaria, Municipio
+from sipi.models import Notaria, Municipio
 
 # Cross-schema join works transparently
 query = (
@@ -223,7 +223,7 @@ async with get_session() as session:
 ```python
 from sipi.db.base import AppBase  # For business models
 from sipi.db.base import GISBase  # For geographic models
-from sipi.db.mixins import UUIDPKMixin, AuditMixin
+from sipi.mixins import UUIDPKMixin, AuditMixin
 
 # Business model (APP schema)
 class MyBusinessModel(UUIDPKMixin, AuditMixin, AppBase):
@@ -242,7 +242,7 @@ class MyGeoModel(UUIDPKMixin, AuditMixin, GISBase):
 
 ```bash
 # Test imports
-python -c "from sipi.db.models import Notaria, Municipio; print('✓ OK')"
+python -c "from sipi.models import Notaria, Municipio; print('✓ OK')"
 
 # Test base classes
 python -c "from sipi.db.base import AppBase, GISBase; print('✓ OK')"

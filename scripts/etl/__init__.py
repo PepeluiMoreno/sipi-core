@@ -1,1 +1,0 @@
-# ETL Pipeline para SIPI

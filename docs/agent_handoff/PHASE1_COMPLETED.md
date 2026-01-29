@@ -99,12 +99,12 @@ Expediente/Bitácora del inmueble: eventos detectados automáticamente.
 
 **Cambios implementados**:
 
-1. **`load_all_models()`** - Actualizada para importar desde `sipi.db.models`
+1. **`load_all_models()`** - Actualizada para importar desde `sipi.models`
    - Líneas 49-70: Ahora detecta si el parámetro es un paquete Python
    - Importa directamente desde `sipi-core` en lugar de buscar archivos locales
 
-2. **`create_schema()`** - Parámetro por defecto cambiado a `"sipi.db.models"`
-   - Línea 569: `models_folder: str = "sipi.db.models"`
+2. **`create_schema()`** - Parámetro por defecto cambiado a `"sipi.models"`
+   - Línea 569: `models_folder: str = "sipi.models"`
 
 **Resultado**:
 - GraphQL auto-genera tipos para `OSMPlace`, `EventoHistorial`, `Inmueble`
