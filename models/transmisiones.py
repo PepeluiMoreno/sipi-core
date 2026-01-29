@@ -6,7 +6,7 @@ from decimal import Decimal
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Text, Numeric, ForeignKey
 
-from ..mixins import UUIDPKMixin, AuditMixin
+from mixins import UUIDPKMixin, AuditMixin
 from db.registry import Base
 
 if TYPE_CHECKING:
@@ -19,14 +19,14 @@ if TYPE_CHECKING:
 class Transmision(UUIDPKMixin, AuditMixin, Base):
     __tablename__ = "transmisiones"
     
-    inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("inmuebles.id"), index=True)
+    inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.inmuebles.id"), index=True)
     # TODO: Transmitente y Adquiriente serán modelados como Actores genéricos
-    # transmitente_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("transmitentes.id"), index=True)
-    # adquiriente_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("adquirientes.id"), index=True)
-    notaria_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("notarias.id"), index=True)
-    registro_propiedad_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("registros_propiedad.id"), index=True)
-    tipo_transmision_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("tipos_transmision.id"), index=True)
-    tipo_certificacion_propiedad_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("tipos_certificacion_propiedad.id"), index=True)
+    # transmitente_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("app.transmitentes.id"), index=True)
+    # adquiriente_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("app.adquirientes.id"), index=True)
+    notaria_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("app.notarias.id"), index=True)
+    registro_propiedad_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("app.registros_propiedad.id"), index=True)
+    tipo_transmision_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("app.tipos_transmision.id"), index=True)
+    tipo_certificacion_propiedad_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("app.tipos_certificacion_propiedad.id"), index=True)
     
     fecha_transmision: Mapped[Optional[datetime]] = mapped_column(index=True)
     descripcion: Mapped[Optional[str]] = mapped_column(Text)
@@ -48,8 +48,8 @@ class Transmision(UUIDPKMixin, AuditMixin, Base):
 class TransmisionAnunciante(UUIDPKMixin, AuditMixin, Base):
     __tablename__ = "transmision_anunciantes"
     
-    transmision_id: Mapped[str] = mapped_column(String(36), ForeignKey("transmisiones.id"), index=True)
-    agencia_inmobiliaria_id: Mapped[str] = mapped_column(String(36), ForeignKey("agencias_inmobiliarias.id"), index=True)
+    transmision_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.transmisiones.id"), index=True)
+    agencia_inmobiliaria_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.agencias_inmobiliarias.id"), index=True)
     
     # Relaciones
     transmision: Mapped["Transmision"] = relationship("Transmision", back_populates="anunciantes")

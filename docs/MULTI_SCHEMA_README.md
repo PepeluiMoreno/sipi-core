@@ -87,7 +87,7 @@ class Municipio(GISBase):
 # Foreign key from APP to GIS schema
 municipio_id: Mapped[str] = mapped_column(
     String(36), 
-    ForeignKey("gis.municipios.id"),  # Explicit schema reference
+    ForeignKey("app.gis.municipios.id"),  # Explicit schema reference
     index=True
 )
 

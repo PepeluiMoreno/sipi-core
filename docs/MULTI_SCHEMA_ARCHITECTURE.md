@@ -102,7 +102,7 @@ Cross-schema foreign keys are supported in PostgreSQL:
 # In app schema model
 municipio_id: Mapped[str] = mapped_column(
     String(36), 
-    ForeignKey("gis.municipios.id"),
+    ForeignKey("app.gis.municipios.id"),
     index=True
 )
 ```

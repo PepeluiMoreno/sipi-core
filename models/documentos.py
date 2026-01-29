@@ -21,17 +21,17 @@ class Documento(UUIDPKMixin, AuditMixin, DocumentoMixin, Base):
 
     tipo_documento_id: Mapped[str] = mapped_column(
         String(36),
-        ForeignKey("tipos_documento.id", ondelete="RESTRICT"),
+        ForeignKey("app.tipos_documento.id", ondelete="RESTRICT"),
         index=True,
     )
     tipo_licencia_id: Mapped[Optional[str]] = mapped_column(
         String(36),
-        ForeignKey("tipos_licencia.id", ondelete="RESTRICT"),
+        ForeignKey("app.tipos_licencia.id", ondelete="RESTRICT"),
         index=True,
     )
     fuente_documental_id: Mapped[Optional[str]] = mapped_column(
         String(36),
-        ForeignKey("fuentes_documentales.id", ondelete="RESTRICT"),
+        ForeignKey("app.fuentes_documentales.id", ondelete="RESTRICT"),
         index=True,
     )
 
@@ -59,12 +59,12 @@ class InmuebleDocumento(UUIDPKMixin, AuditMixin, Base):
 
     inmueble_id: Mapped[str] = mapped_column(
         String(36),
-        ForeignKey("inmuebles.id", ondelete="CASCADE"),
+        ForeignKey("app.inmuebles.id", ondelete="CASCADE"),
         index=True,
     )
     documento_id: Mapped[str] = mapped_column(
         String(36),
-        ForeignKey("documentos.id", ondelete="CASCADE"),
+        ForeignKey("app.documentos.id", ondelete="CASCADE"),
         index=True,
     )
     descripcion: Mapped[Optional[str]] = mapped_column(Text, nullable=True)

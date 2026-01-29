@@ -1,125 +1,99 @@
-
-
- # alembic/env.py
+# alembic/env.py
 
 from logging.config import fileConfig
-import os
 import sys
 from pathlib import Path
-from sqlalchemy import engine_from_config, pool, MetaData, text
+from collections import defaultdict
 from alembic import context
 from geoalchemy2 import alembic_helpers
 
 # ---------------------------------------------------------
-# PATHS
+# PATHS (estructura aplanada)
 # ---------------------------------------------------------
 sipi_core_root = Path(__file__).parent.parent
-sys.path.insert(0, str(sipi_core_root / "src"))
+sys.path.insert(0, str(sipi_core_root))
 
 # ---------------------------------------------------------
-# ENV y DATABASE URL
+# IMPORT MODELS (CRÍTICO - registra todas las tablas en metadata)
 # ---------------------------------------------------------
-from dotenv import load_dotenv
-env_path = sipi_core_root / ".env"
-if env_path.exists():
-    load_dotenv(env_path)
-
-environment = os.getenv("ENVIRONMENT", "development")
-env_specific_path = sipi_core_root / f".env.{environment}"
-if env_specific_path.exists():
-    load_dotenv(env_specific_path, override=True)
-
-database_url = os.getenv("DATABASE_URL")
-if not database_url:
-    user = os.getenv("POSTGRES_USER", "sipi")
-    password = os.getenv("POSTGRES_PASSWORD", "sipi")
-    host = os.getenv("POSTGRES_SERVICE_NAME", "localhost")
-    port = os.getenv("POSTGRES_PORT", "5432")
-    db = os.getenv("POSTGRES_DB", "sipi")
-    database_url = f"postgresql://{user}:{password}@{host}:{port}/{db}"
-else:
-    database_url = database_url.replace("postgresql+asyncpg://", "postgresql://")
+from models import *
 
 # ---------------------------------------------------------
-# IMPORT MODELS Y REGISTRY
+# IMPORT METADATA Y MANAGER
 # ---------------------------------------------------------
-from db.registry import Base, APP_SCHEMA, GIS_SCHEMA
+from db.metadata import get_combined_metadata, ALEMBIC_SCHEMAS
+from db.sessions.manager import SyncDatabaseManager, DatabaseConfig
 
 # ---------------------------------------------------------
-# DEFINIR SCHEMAS DINÁMICOS
-# ---------------------------------------------------------
-DEFINED_SCHEMAS = os.getenv("DEFINED_SCHEMAS", f"{APP_SCHEMA},{GIS_SCHEMA}").split(",")
-print(f"Using defined schemas for Alembic: {DEFINED_SCHEMAS}")
-# ---------------------------------------------------------
-# METADATA COMBINADA
-# ---------------------------------------------------------
-# Placeholder para cuando tengas tablas GIS explícitas
-combined_metadata = MetaData()
-for table in Base.metadata.tables.values():
-    # Asignar schema APP por defecto si no tiene schema
-    if table.schema is None:
-        table.schema = APP_SCHEMA
-    table.to_metadata(combined_metadata)
-
-target_metadata = combined_metadata
-print(f"Tables in target_metadata for Alembic: {list(target_metadata.tables.keys())}")
-# ---------------------------------------------------------
-# CONFIG ALEMBIC
+# CONFIGURACIÓN ALEMBIC
 # ---------------------------------------------------------
 config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
-config.set_main_option("sqlalchemy.url", database_url)
 
 # ---------------------------------------------------------
-# FILTRO DE OBJETOS
+# METADATA Y RESUMEN POR SCHEMA
+# ---------------------------------------------------------
+target_metadata = get_combined_metadata()
+
+# Contar tablas por schema (no listarlas)
+tables_by_schema = defaultdict(int)
+for table_name, table in target_metadata.tables.items():
+    schema = getattr(table, "schema", None) or "default"
+    tables_by_schema[schema] += 1
+
+print(f"Alembic managing schemas: {ALEMBIC_SCHEMAS}")
+print("Tables in target_metadata for Alembic:")
+for schema in ALEMBIC_SCHEMAS:
+    count = tables_by_schema.get(schema, 0)
+    print(f"  - {schema}: {count} tables")
+total = sum(tables_by_schema.values())
+print(f"  Total: {total} tables")
+
+# ---------------------------------------------------------
+# FILTRO DE OBJETOS (corregido)
 # ---------------------------------------------------------
 def include_object(object, name, type_, reflected, compare_to):
     """
     Incluye solo tablas de nuestros schemas definidos, ignora PostGIS internos
     """
     if type_ == "schema":
-        return name in DEFINED_SCHEMAS
+        return name in ALEMBIC_SCHEMAS
+    
     if type_ == "table":
         schema = getattr(object, "schema", None)
-        return schema in DEFINED_SCHEMAS
+        return schema in ALEMBIC_SCHEMAS
+    
     if type_ in {"index", "unique_constraint", "foreign_key_constraint", "check_constraint"}:
         table = getattr(object, "table", None)
         if table is not None:
-            return table.schema in DEFINED_SCHEMAS
+            schema = getattr(table, "schema", None)
+            return schema in ALEMBIC_SCHEMAS
         return False
+    
     if type_ == "column":
-        table = object.table
-        return table.schema in DEFINED_SCHEMAS
+        table = getattr(object, "table", None)
+        if table is not None:
+            schema = getattr(table, "schema", None)
+            return schema in ALEMBIC_SCHEMAS
+        return False
+    
     return True
 
 # ---------------------------------------------------------
-# INIT DB
-# ---------------------------------------------------------
-def init_database(connection):
-    connection.execute(text("SELECT 1"))
-    # Extensiones PostGIS
-    connection.execute(text("CREATE EXTENSION IF NOT EXISTS postgis"))
-    connection.execute(text("CREATE EXTENSION IF NOT EXISTS postgis_topology"))
-    # Crear schemas definidos
-    for schema in DEFINED_SCHEMAS:
-        connection.execute(text(f"CREATE SCHEMA IF NOT EXISTS {schema}"))
-    # search_path
-    connection.execute(text(f"SET search_path TO {','.join(DEFINED_SCHEMAS)}, public"))
-    connection.commit()
-
-# ---------------------------------------------------------
-# MIGRACIONES OFFLINE
+# MIGRACIONES
 # ---------------------------------------------------------
 def run_migrations_offline():
-    url = config.get_main_option("sqlalchemy.url")
+    """Modo offline: genera archivos de migración sin conectar a BD"""
+    url = DatabaseConfig.get_database_url(async_mode=False)
+    
     context.configure(
         url=url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         include_schemas=True,
-        version_table_schema=APP_SCHEMA,
+        version_table_schema=ALEMBIC_SCHEMAS[0],
         include_object=include_object,
         process_revision_directives=alembic_helpers.writer,
         render_item=alembic_helpers.render_item,
@@ -128,31 +102,32 @@ def run_migrations_offline():
     with context.begin_transaction():
         context.run_migrations()
 
-# ---------------------------------------------------------
-# MIGRACIONES ONLINE
-# ---------------------------------------------------------
+
 def run_migrations_online():
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
-    with connectable.connect() as connection:
-        init_database(connection)
-        context.configure(
-            connection=connection,
-            target_metadata=target_metadata,
-            include_schemas=True,
-            version_table_schema=APP_SCHEMA,
-            include_object=include_object,
-            compare_type=True,
-            compare_server_default=True,
-            process_revision_directives=alembic_helpers.writer,
-            render_item=alembic_helpers.render_item,
-            user_module_prefix="geoalchemy2.",
-        )
-        with context.begin_transaction():
-            context.run_migrations()
+    """Modo online: ejecuta migraciones conectándose a la BD"""
+    manager = SyncDatabaseManager(echo=False)
+    
+    try:
+        manager.init_database()
+        
+        with manager.engine.connect() as connection:
+            context.configure(
+                connection=connection,
+                target_metadata=target_metadata,
+                include_schemas=True,
+                version_table_schema=ALEMBIC_SCHEMAS[0],
+                include_object=include_object,
+                compare_type=True,
+                compare_server_default=True,
+                process_revision_directives=alembic_helpers.writer,
+                render_item=alembic_helpers.render_item,
+                user_module_prefix="geoalchemy2.",
+            )
+            with context.begin_transaction():
+                context.run_migrations()
+    finally:
+        manager.close()
+
 
 # ---------------------------------------------------------
 # ENTRYPOINT

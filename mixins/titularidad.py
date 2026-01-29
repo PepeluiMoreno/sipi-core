@@ -20,7 +20,7 @@ class TitularidadMixin:
     USO EN MODELO TITULAR:
     class NotariaTitular(TitularBase):
         __table_args__ = {'schema': 'sipi'}
-        notaria_id: Mapped[str] = ForeignKey("notarias.id")
+        notaria_id: Mapped[str] = ForeignKey("app.notarias.id")
         notaria: Mapped["Notaria"] = relationship("Notaria", back_populates="titulares")
     
     ACCESO:

@@ -1,13 +1,13 @@
 from __future__ import annotations
 from datetime import datetime
-from typing import Optional, List
-from decimal import Decimal, TYPE_CHECKING
+from typing import Optional, List, TYPE_CHECKING
+from decimal import Decimal
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Text, Numeric, Boolean, ForeignKey
 from geoalchemy2 import Geometry
 
 from db.registry import Base
-from ..mixins import UUIDPKMixin, AuditMixin
+from mixins import UUIDPKMixin, AuditMixin
 
 if TYPE_CHECKING:   
     from models.geografia import ComunidadAutonoma, Provincia, Municipio
@@ -36,22 +36,22 @@ class Inmueble(UUIDPKMixin, AuditMixin, Base):
     enlace_web_visitas: Mapped[Optional[str]] = mapped_column(String(500))
 
     # --- Dependencias Complementarias (Auto-relación) ---
-    inmueble_principal_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("inmuebles.id"), index=True)
+    inmueble_principal_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("app.inmuebles.id"), index=True)
 
-    comunidad_autonoma_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("comunidades_autonomas.id"), index=True)
-    provincia_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("provincias.id"), index=True)
-    municipio_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("municipios.id"), index=True)
+    comunidad_autonoma_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("app.comunidades_autonomas.id"), index=True)
+    provincia_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("app.provincias.id"), index=True)
+    municipio_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("app.municipios.id"), index=True)
     direccion: Mapped[Optional[str]] = mapped_column(String(500))
     coordenadas: Mapped[Optional[Geometry]] = mapped_column(Geometry(geometry_type='POINT', srid=4326))
     
-    tipo_inmueble_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("tipos_inmueble.id"), index=True)
+    tipo_inmueble_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("app.tipos_inmueble.id"), index=True)
     # figura_proteccion_id: Deprecado - usar InmuebleNivelProteccion
-    estado_conservacion_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("estados_conservacion.id"), index=True)
-    estado_tratamiento_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("estados_tratamiento.id"), index=True)
+    estado_conservacion_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("app.estados_conservacion.id"), index=True)
+    estado_tratamiento_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("app.estados_tratamiento.id"), index=True)
 
     # --- Relaciones Eclesiásticas ---
-    diocesis_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("diocesis.id"), index=True)  # Demarcación geográfica
-    entidad_religiosa_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("entidades_religiosas.id"), index=True)  # Gestor/Custodio
+    diocesis_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("app.diocesis.id"), index=True)  # Demarcación geográfica
+    entidad_religiosa_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("app.entidades_religiosas.id"), index=True)  # Gestor/Custodio
 
     # --- Propietario actual (polimórfico) ---
     propietario_tipo_actor: Mapped[Optional[str]] = mapped_column(String(50), index=True)  # Código TipoActor
@@ -229,9 +229,9 @@ class Inmueble(UUIDPKMixin, AuditMixin, Base):
 class Inmatriculacion(UUIDPKMixin, AuditMixin, Base):
     __tablename__ = "inmatriculaciones"
 
-    inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("inmuebles.id"), index=True)
-    registro_propiedad_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("registros_propiedad.id"), index=True)
-    tipo_certificacion_propiedad_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("tipos_certificacion_propiedad.id"), index=True)
+    inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.inmuebles.id"), index=True)
+    registro_propiedad_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("app.registros_propiedad.id"), index=True)
+    tipo_certificacion_propiedad_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("app.tipos_certificacion_propiedad.id"), index=True)
 
     fecha_inmatriculacion: Mapped[Optional[datetime]]
     numero_finca: Mapped[Optional[str]] = mapped_column(String(50), index=True)
@@ -250,7 +250,7 @@ class Inmatriculacion(UUIDPKMixin, AuditMixin, Base):
 class InmuebleDenominacion(UUIDPKMixin, AuditMixin, Base):
     __tablename__ = "inmuebles_denominaciones"
     
-    inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("inmuebles.id"), index=True)
+    inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.inmuebles.id"), index=True)
     denominacion: Mapped[str] = mapped_column(String(255), index=True)
     es_principal: Mapped[bool] = mapped_column(Boolean, default=False)
     
@@ -260,7 +260,7 @@ class InmuebleDenominacion(UUIDPKMixin, AuditMixin, Base):
 class InmuebleOSMExt(UUIDPKMixin, AuditMixin, Base):
     __tablename__ = "inmuebles_osm_ext"
     
-    inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("inmuebles.id"), index=True)
+    inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.inmuebles.id"), index=True)
     osm_type: Mapped[str] = mapped_column(String(10))
     osm_id: Mapped[str] = mapped_column(String(50), index=True)
     osm_tags: Mapped[Optional[str]] = mapped_column(Text)
@@ -271,7 +271,7 @@ class InmuebleOSMExt(UUIDPKMixin, AuditMixin, Base):
 class InmuebleWDExt(UUIDPKMixin, AuditMixin, Base):
     __tablename__ = "inmuebles_wd_ext"
     
-    inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("inmuebles.id"), index=True)
+    inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.inmuebles.id"), index=True)
     wikidata_qid: Mapped[str] = mapped_column(String(32), unique=True, index=True)
     wikipedia_url: Mapped[Optional[str]] = mapped_column(String(500))
     
@@ -282,8 +282,8 @@ class InmuebleCita(UUIDPKMixin, AuditMixin, Base):
     """Cita bibliografica de un inmueble en una fuente"""
     __tablename__ = "citas_bibliograficas"
 
-    inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("inmuebles.id"), index=True)
-    fuente_id: Mapped[str] = mapped_column(String(36), ForeignKey("fuentes_historiograficas.id"), index=True)
+    inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.inmuebles.id"), index=True)
+    fuente_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.fuentes_historiograficas.id"), index=True)
     referencia: Mapped[str] = mapped_column(String(500))
     pagina: Mapped[Optional[str]] = mapped_column(String(50))
     fecha: Mapped[Optional[datetime]]
@@ -301,8 +301,8 @@ class InmuebleUso(UUIDPKMixin, AuditMixin, Base):
     """
     __tablename__ = "inmuebles_usos"
 
-    inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("inmuebles.id"), index=True)
-    tipo_uso_id: Mapped[str] = mapped_column(String(36), ForeignKey("tipos_uso_inmueble.id"), index=True)
+    inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.inmuebles.id"), index=True)
+    tipo_uso_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.tipos_uso_inmueble.id"), index=True)
 
     fecha_desde: Mapped[datetime] = mapped_column(index=True)
     fecha_hasta: Mapped[Optional[datetime]] = mapped_column(index=True)  # NULL = uso actual
@@ -323,8 +323,8 @@ class InmuebleNivelProteccion(UUIDPKMixin, AuditMixin, Base):
     """
     __tablename__ = "inmuebles_niveles_proteccion"
 
-    inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("inmuebles.id"), index=True)
-    figura_proteccion_id: Mapped[str] = mapped_column(String(36), ForeignKey("tipos_figura_proteccion.id"), index=True)
+    inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.inmuebles.id"), index=True)
+    figura_proteccion_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.tipos_figura_proteccion.id"), index=True)
 
     fecha_desde: Mapped[datetime] = mapped_column(index=True)
     fecha_hasta: Mapped[Optional[datetime]] = mapped_column(index=True)  # NULL = protección actual
@@ -352,8 +352,8 @@ class InmuebleNivelProteccion(UUIDPKMixin, AuditMixin, Base):
 #     """
 #     __tablename__ = "inmuebles_eventos"
 #
-#     inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("inmuebles.id"), index=True)
-#     tipo_evento_id: Mapped[str] = mapped_column(String(36), ForeignKey("eventos_registrables.id"), index=True)
+#     inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.inmuebles.id"), index=True)
+#     tipo_evento_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.eventos_registrables.id"), index=True)
 #     fecha_evento: Mapped[datetime]
 #     detalles: Mapped[Optional[dict]] = mapped_column(JSONB)
 #     descripcion: Mapped[Optional[str]] = mapped_column(Text)

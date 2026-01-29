@@ -29,7 +29,7 @@ class Administracion(
     Base,
 ):
     __tablename__ = "administraciones"
-    __tablename___args__ = {"schema": "app"}
+    __table_args__ = {"schema": "app"}  
 
     nombre: Mapped[str] = mapped_column(String(255), index=True)
     codigo_oficial: Mapped[Optional[str]] = mapped_column(
@@ -37,11 +37,14 @@ class Administracion(
     )
     ambito: Mapped[Optional[str]] = mapped_column(String(100))
 
+    # Auto-referencia: usar schema explícito
     administracion_padre_id: Mapped[Optional[str]] = mapped_column(
         String(36),
-        ForeignKey("administraciones.id"),
+        ForeignKey("app.administraciones.id"),  # Schema explícito
         index=True,
     )
+    
+    # ... resto igual ...
     nivel_jerarquico: Mapped[Optional[str]] = mapped_column(
         String(50),
         index=True,
@@ -110,7 +113,7 @@ class AdministracionTitular(TitularBase, ContactoDireccionMixin, Base):
 
     administracion_id: Mapped[str] = mapped_column(
         String(36),
-        ForeignKey("administraciones.id"),
+        ForeignKey("app.administraciones.id"),
         index=True,
     )
 

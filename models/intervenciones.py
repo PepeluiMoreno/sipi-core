@@ -5,14 +5,15 @@ from typing import TYPE_CHECKING, Optional
 from decimal import Decimal
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Text, ForeignKey, Numeric
-from .multischema_base import Base
-from ..mixins import UUIDPKMixin, AuditMixin
+
+from db.registry import Base
+from mixins import UUIDPKMixin, AuditMixin
 
 class Intervencion(UUIDPKMixin, AuditMixin, Base):
     """Intervenciones arquitectónicas realizadas sobre un inmueble"""
     __tablename__ = "intervenciones"
 
-    inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("inmuebles.id"), index=True)
+    inmueble_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.inmuebles.id"), index=True)
     nombre: Mapped[str] = mapped_column(String(255), index=True)
     descripcion: Mapped[Optional[str]] = mapped_column(Text)
 
@@ -32,9 +33,9 @@ class IntervencionTecnico(UUIDPKMixin, AuditMixin, Base):
     """Técnicos asignados a una intervención con roles específicos"""
     __tablename__ = "intervenciones_tecnicos"
 
-    intervencion_id: Mapped[str] = mapped_column(String(36), ForeignKey("intervenciones.id"), index=True)
-    tecnico_id: Mapped[str] = mapped_column(String(36), ForeignKey("tecnicos.id"), index=True)
-    rol_tecnico_id: Mapped[str] = mapped_column(String(36), ForeignKey("roles_tecnico.id"), index=True)
+    intervencion_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.intervenciones.id"), index=True)
+    tecnico_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.tecnicos.id"), index=True)
+    rol_tecnico_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.roles_tecnico.id"), index=True)
 
     descripcion: Mapped[Optional[str]] = mapped_column(Text)
     fecha_inicio: Mapped[Optional[datetime]] = mapped_column(index=True)

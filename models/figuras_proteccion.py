@@ -65,7 +65,7 @@ class FiguraProteccion(UUIDPKMixin, AuditMixin, Base):
 
     comunidad_autonoma_id: Mapped[Optional[str]] = mapped_column(
         String(36),
-        ForeignKey("comunidades_autonomas.id"),
+        ForeignKey("app.comunidades_autonomas.id"),
         index=True,
         nullable=True,
         comment="NULL = figura de ámbito nacional. Con valor = figura autonómica específica"

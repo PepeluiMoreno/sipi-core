@@ -12,7 +12,7 @@ from typing import Optional
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import String, ForeignKey
 
-from db.registry importAppBase
+from db.registry import Base
 from mixins import (
     UUIDPKMixin, 
     AuditMixin, 
@@ -34,7 +34,7 @@ class PersonaMixin(IdentificacionMixin):
     )
 
 
-class TitularBase(UUIDPKMixin, AuditMixin, IdentificacionMixin, AppBase):
+class TitularBase(UUIDPKMixin, AuditMixin, IdentificacionMixin, Base):
     """
     Base class for temporary holder/manager tables
     

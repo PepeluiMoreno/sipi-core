@@ -37,18 +37,19 @@ class AuditMixin:
         index=True
     )
     
-    # Foreign Keys para usuarios responsables
+    # Foreign Keys para usuarios responsables - usando lambda para evaluación perezosa
     @declared_attr
     def created_by_id(cls) -> Mapped[Optional[str]]:
-        return mapped_column(String(36), ForeignKey("usuarios.id"), index=True)
+        # Usar string con schema explícito para evitar problemas de orden
+        return mapped_column(String(36), ForeignKey("app.usuarios.id"), index=True)
     
     @declared_attr
     def updated_by_id(cls) -> Mapped[Optional[str]]:
-        return mapped_column(String(36), ForeignKey("usuarios.id"), index=True)
+        return mapped_column(String(36), ForeignKey("app.usuarios.id"), index=True)
     
     @declared_attr
     def deleted_by_id(cls) -> Mapped[Optional[str]]:
-        return mapped_column(String(36), ForeignKey("usuarios.id"), index=True)
+        return mapped_column(String(36), ForeignKey("app.usuarios.id"), index=True)
     
     # Relaciones
     @declared_attr

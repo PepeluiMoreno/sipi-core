@@ -164,7 +164,7 @@ class FuenteDocumental(UUIDPKMixin, AuditMixin, Base):
     es_externa: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, index=True)
     requiere_url_externa: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     permite_metadata_extra: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    licencia_predeterminada_id: Mapped[str | None] = mapped_column(String(36), ForeignKey("tipos_licencia.id"), nullable=True)
+    licencia_predeterminada_id: Mapped[str | None] = mapped_column(String(36), ForeignKey("app.tipos_licencia.id"), nullable=True)
     categoria: Mapped[str | None] = mapped_column(String(50), nullable=True, index=True)
     soporta_sincronizacion: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     frecuencia_sync_dias: Mapped[int | None] = mapped_column(Integer, nullable=True)

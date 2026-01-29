@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from geoalchemy2 import Geometry
 
 from db.registry import Base
-from ..mixins import UUIDPKMixin, AuditMixin
+from mixins import UUIDPKMixin, AuditMixin
 
 class OSMPlace(UUIDPKMixin, AuditMixin, Base):
     """

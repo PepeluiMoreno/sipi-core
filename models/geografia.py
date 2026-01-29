@@ -11,8 +11,8 @@ from mixins import UUIDPKMixin, AuditMixin
 #from models import Inmueble, FiguraProteccion, Administracion
 
 if TYPE_CHECKING:
-    from models.inmuebles import Inmueble,
-    from models.figuras_proteccion import FiguraProteccion,
+    from models.inmuebles import Inmueble
+    from models.figuras_proteccion import FiguraProteccion
     from models.administraciones import Administracion
     from models.privados import Privado
     from models.tecnicos import Tecnico
@@ -57,7 +57,7 @@ class Provincia(UUIDPKMixin, AuditMixin, Base):
     nombre_oficial: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
     nombre_cooficial: Mapped[Optional[str]] = mapped_column(String(100))
     nombre_alternativo: Mapped[Optional[str]] = mapped_column(String(100))
-    comunidad_autonoma_id: Mapped[str] = mapped_column(String(36), ForeignKey("comunidades_autonomas.id"), index=True, nullable=False)
+    comunidad_autonoma_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.comunidades_autonomas.id"), index=True, nullable=False)
   
 
     # Relaciones
@@ -86,7 +86,7 @@ class Municipio(UUIDPKMixin, AuditMixin, Base):
     nombre_oficial: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
     nombre_cooficial: Mapped[Optional[str]] = mapped_column(String(100))
     nombre_alternativo: Mapped[Optional[str]] = mapped_column(String(100)) 
-    provincia_id: Mapped[str] = mapped_column(String(36), ForeignKey("provincias.id"), index=True, nullable=False)
+    provincia_id: Mapped[str] = mapped_column(String(36), ForeignKey("app.provincias.id"), index=True, nullable=False)
  
     
     # Relaciones

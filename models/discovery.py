@@ -70,13 +70,13 @@ class DeteccionAnuncio(Base, AuditMixin):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     inmueble_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("portals_inmuebles_raw.id"),
+        ForeignKey("app.portals_inmuebles_raw.id"),
         index=True,
     )
 
     inmueble_core_id: Mapped[Optional[str]] = mapped_column(
         String(36),
-        ForeignKey("inmuebles.id"),
+        ForeignKey("app.inmuebles.id"),
         index=True,
     )
 

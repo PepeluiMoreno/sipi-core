@@ -22,8 +22,8 @@ from mixins import UUIDPKMixin, AuditMixin, IdentificacionMixin, ContactoMixin
 usuario_rol = Table(
     "usuario_rol",
     metadata,  # ← metadata del registry, no Base.metadata
-    Column("usuario_id", String(36), ForeignKey("usuarios.id"), primary_key=True),
-    Column("rol_id", String(36), ForeignKey("roles.id"), primary_key=True),
+    Column("usuario_id", String(36), ForeignKey("app.usuarios.id"), primary_key=True),
+    Column("rol_id", String(36), ForeignKey("app.roles.id"), primary_key=True),
     Column(
         "fecha_asignacion",
         DateTime,
@@ -32,7 +32,7 @@ usuario_rol = Table(
     Column(
         "asignado_por",
         String(36),
-        ForeignKey("usuarios.id"),
+        ForeignKey("app.usuarios.id"),
         nullable=True,
     ),
 )
