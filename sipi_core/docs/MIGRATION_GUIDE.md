@@ -40,10 +40,10 @@ ls -lh backup_*.sql
 
 ```bash
 # Test that new imports work
-python -c "from sipi.models import Notaria, Municipio, AppBase, GISBase; print('✓ Imports OK')"
+python -c "from sipi_core.models import Notaria, Municipio, AppBase, GISBase; print('✓ Imports OK')"
 
 # Test base classes
-python -c "from sipi.db.base import APP_SCHEMA, GIS_SCHEMA; print(f'APP: {APP_SCHEMA}, GIS: {GIS_SCHEMA}')"
+python -c "from sipi_core.db.base import APP_SCHEMA, GIS_SCHEMA; print(f'APP: {APP_SCHEMA}, GIS: {GIS_SCHEMA}')"
 ```
 
 ## Phase 2: Generate Migration
@@ -171,8 +171,8 @@ ORDER BY tc.table_schema, tc.table_name;
 
 ```python
 # test_multi_schema.py
-from sipi.db.sessions import get_session
-from sipi.models import Notaria, Municipio
+from sipi_core.db.sessions import get_session
+from sipi_core.models import Notaria, Municipio
 
 async def test_cross_schema_query():
     async with get_session() as session:
@@ -196,16 +196,16 @@ asyncio.run(test_cross_schema_query())
 
 **Old:**
 ```python
-from sipi.models.actores import Notaria, Administracion
-from sipi.models.geografia import Municipio
+from sipi_core.models.actores import Notaria, Administracion
+from sipi_core.models.geografia import Municipio
 ```
 
 **New:**
 ```python
-from sipi.models import Notaria, Administracion, Municipio
+from sipi_core.models import Notaria, Administracion, Municipio
 # or
-from sipi.models.actores import Notaria, Administracion
-from sipi.models.geografia import Municipio
+from sipi_core.models.actores import Notaria, Administracion
+from sipi_core.models.geografia import Municipio
 ```
 
 ### 4.2 Update Queries
@@ -399,7 +399,7 @@ find . -type d -name __pycache__ -exec rm -rf {} +
 find . -type f -name "*.pyc" -delete
 
 # Verify imports
-python -c "from sipi.models import Notaria; print('OK')"
+python -c "from sipi_core.models import Notaria; print('OK')"
 ```
 
 ### Issue: Alembic Can't Detect Changes
@@ -409,8 +409,8 @@ python -c "from sipi.models import Notaria; print('OK')"
 **Solution:**
 ```python
 # In alembic/env.py, verify:
-from sipi.db.base import AppBase, GISBase
-from sipi.db import models  # Import all models
+from sipi_core.db.base import AppBase, GISBase
+from sipi_core.db import models  # Import all models
 
 # Ensure metadata is combined
 combined_metadata = MetaData()

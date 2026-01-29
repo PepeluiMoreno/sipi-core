@@ -68,7 +68,7 @@ All in `gis` schema with cross-schema relationships to `app` models.
 ### Multi-Schema Support
 
 ```python
-from sipi.db.base import AppBase, GISBase
+from sipi_core.db.base import AppBase, GISBase
 
 # Application models
 class Notaria(AppBase):
@@ -192,18 +192,18 @@ The system automatically:
 
 ```python
 # Import from main package
-from sipi.models import Notaria, Municipio, Administracion
+from sipi_core.models import Notaria, Municipio, Administracion
 
 # Or import from subpackages
-from sipi.models.actores import Notaria, Administracion
-from sipi.models.geografia import Municipio
+from sipi_core.models.actores import Notaria, Administracion
+from sipi_core.models.geografia import Municipio
 ```
 
 ### Querying Across Schemas
 
 ```python
 from sqlalchemy import select
-from sipi.models import Notaria, Municipio
+from sipi_core.models import Notaria, Municipio
 
 # Cross-schema join works transparently
 query = (
@@ -221,9 +221,9 @@ async with get_session() as session:
 ### Creating New Models
 
 ```python
-from sipi.db.base import AppBase  # For business models
-from sipi.db.base import GISBase  # For geographic models
-from sipi.mixins import UUIDPKMixin, AuditMixin
+from sipi_core.db.base import AppBase  # For business models
+from sipi_core.db.base import GISBase  # For geographic models
+from sipi_core.mixins import UUIDPKMixin, AuditMixin
 
 # Business model (APP schema)
 class MyBusinessModel(UUIDPKMixin, AuditMixin, AppBase):
@@ -242,13 +242,13 @@ class MyGeoModel(UUIDPKMixin, AuditMixin, GISBase):
 
 ```bash
 # Test imports
-python -c "from sipi.models import Notaria, Municipio; print('✓ OK')"
+python -c "from sipi_core.models import Notaria, Municipio; print('✓ OK')"
 
 # Test base classes
-python -c "from sipi.db.base import AppBase, GISBase; print('✓ OK')"
+python -c "from sipi_core.db.base import AppBase, GISBase; print('✓ OK')"
 
 # Check schemas
-python -c "from sipi.db.base import APP_SCHEMA, GIS_SCHEMA; print(f'APP: {APP_SCHEMA}, GIS: {GIS_SCHEMA}')"
+python -c "from sipi_core.db.base import APP_SCHEMA, GIS_SCHEMA; print(f'APP: {APP_SCHEMA}, GIS: {GIS_SCHEMA}')"
 ```
 
 ### Generate Migration
